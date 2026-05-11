@@ -448,4 +448,24 @@ table td{
 
         width:100%;
     }
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        background: rgba(20, 20, 20, 0.7);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: all 0.8s ease;
+    }
+    
+    .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
