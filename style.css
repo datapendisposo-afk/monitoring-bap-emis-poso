@@ -18,7 +18,7 @@
     --orange:#f59e0b;
 }
 
-[data-theme="light"]{
+[data-theme="light"] .header{
     --bg:#f1f5f9;
     --card:rgba(255,255,255,0.88);
     --text:#0f172a;
@@ -94,6 +94,12 @@ HEADER
 ====================== */
 
 .header{
+    position:sticky;
+
+    top:0;
+
+    z-index:1000;
+
     display:flex;
 
     justify-content:space-between;
@@ -102,11 +108,20 @@ HEADER
 
     gap:20px;
 
+    flex-wrap:wrap;
+
     margin-bottom:20px;
 
-    flex-wrap:wrap;
-}
+    padding:20px;
 
+    border-radius:24px;
+
+    background:rgba(15,23,42,0.88);
+
+    backdrop-filter:blur(14px);
+
+    border:1px solid rgba(255,255,255,0.06);
+}
 .header h1{
     font-size:56px;
     font-weight:700;
