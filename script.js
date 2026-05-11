@@ -458,30 +458,7 @@ function renderInfo(data = []) {
         }
     });
 
-    // ======================
-    // SHOW POPUP
-    // ======================
-
-    if (
-        popupHTML &&
-        !popupAlreadyShown
-    ) {
-
-        if (popupContent) {
-            popupContent.innerHTML =
-                popupHTML;
-        }
-
-        if (popupOverlay) {
-            popupOverlay.classList.add(
-                "active"
-            );
-        }
-
-        popupAlreadyShown = true;
-    }
-}
-
+    
     // ======================
     // SHOW POPUP ONCE
     // ======================
