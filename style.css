@@ -467,6 +467,10 @@ table td{
         transition: all 0.3s ease;
     }
 
+    .header.scrolled {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
     .reveal {
         opacity: 0;
         transform: translateY(40px);
