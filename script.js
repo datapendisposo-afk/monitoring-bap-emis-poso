@@ -32,6 +32,9 @@ const searchInput =
 const filterJenjang =
     document.getElementById("selJenjang");
 
+const filterStatusBap =
+    document.getElementById("selStatusBap");
+
 const btnTheme =
     document.getElementById("btnTheme");
 
@@ -97,24 +100,72 @@ async function loadData() {
         // PENTING:
         // JANGAN renderTable(allData)
         // HARUS filterData()
-        filterData();
+        function filterData() {
 
-    } catch (error) {
-
-        console.error(
-            "Fetch Error:",
-            error
-        );
-
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="4" class="loading">
-                    Gagal mengambil data
-                </td>
-            </tr>
-        `;
-    }
-}
+            const keyword =
+                searchInput.value
+                    .toLowerCase()
+                    .trim();
+        
+            const jenjang =
+                filterJenjang.value;
+        
+            const statusFilter =
+                filterStatusBap.value;
+        
+            const filtered =
+                allData.filter(item => {
+        
+                    const nama =
+                        String(
+                            item.nama_lembaga || ""
+                        ).toLowerCase();
+        
+                    const itemJenjang =
+                        String(
+                            item.jenjang || ""
+                        ).trim();
+        
+                    // NORMALISASI STATUS
+                    const rawStatus =
+                        String(item.status_bap)
+                            .toLowerCase()
+                            .trim();
+        
+                    const isSudah =
+                        rawStatus === "1" ||
+                        rawStatus === "sudah" ||
+                        rawStatus === "sudah bap" ||
+                        rawStatus === "true";
+        
+                    const statusValue =
+                        isSudah
+                        ? "SUDAH"
+                        : "BELUM";
+        
+                    // FILTER SEARCH
+                    const matchSearch =
+                        nama.includes(keyword);
+        
+                    // FILTER JENJANG
+                    const matchJenjang =
+                        jenjang === "ALL" ||
+                        itemJenjang === jenjang;
+        
+                    // FILTER STATUS
+                    const matchStatus =
+                        statusFilter === "ALL" ||
+                        statusValue === statusFilter;
+        
+                    return (
+                        matchSearch &&
+                        matchJenjang &&
+                        matchStatus
+                    );
+                });
+        
+            renderTable(filtered);
+        }
 
 // ======================
 // SUMMARY
@@ -184,14 +235,46 @@ function renderTable(data) {
 
                     <span class="
                         badge
-                        ${Number(item.status_bap) === 1
+                        ${(
+                            String(item.status_bap)
+                                .toLowerCase()
+                                .trim() === "1" ||
+                        
+                            String(item.status_bap)
+                                .toLowerCase()
+                                .trim() === "sudah" ||
+                        
+                            String(item.status_bap)
+                                .toLowerCase()
+                                .trim() === "sudah bap" ||
+                        
+                            String(item.status_bap)
+                                .toLowerCase()
+                                .trim() === "true"
+                        )
                             ? "badge-success"
                             : "badge-danger"}
                     ">
 
-                        ${Number(item.status_bap) === 1
-                            ? "Sudah BAP"
-                            : "Belum BAP"}
+                        ${(
+                                String(item.status_bap)
+                                    .toLowerCase()
+                                    .trim() === "1" ||
+                            
+                                String(item.status_bap)
+                                    .toLowerCase()
+                                    .trim() === "sudah" ||
+                            
+                                String(item.status_bap)
+                                    .toLowerCase()
+                                    .trim() === "sudah bap" ||
+                            
+                                String(item.status_bap)
+                                    .toLowerCase()
+                                    .trim() === "true"
+                            )
+                                ? "Sudah BAP"
+                                : "Belum BAP"}
 
                     </span>
 
@@ -259,6 +342,11 @@ searchInput.addEventListener(
 // ======================
 
 filterJenjang.addEventListener(
+    "change",
+    filterData
+);
+
+filterStatusBap.addEventListener(
     "change",
     filterData
 );
