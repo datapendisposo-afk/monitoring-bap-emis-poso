@@ -44,11 +44,19 @@ const btnExport =
 const timerEl =
     document.getElementById("timer");
 
-const runningInfo =
-    document.getElementById("runningInfo");
+// ======================
+// RUNNING TEXT
+// ======================
+
+const runningContainer =
+    document.getElementById("runningText");
 
 const runningTrack =
-    document.getElementById("runningTrack");
+    document.getElementById("runningWrapper");
+
+// ======================
+// POPUP
+// ======================
 
 const popupOverlay =
     document.getElementById("popupOverlay");
@@ -377,6 +385,8 @@ function buildInfoText(item) {
 }
 
 function renderInfo(data = []) {
+    runningContainer.style.display = "none";
+    runningTrack.innerHTML = "";
 
     if (!data.length) return;
 
@@ -795,15 +805,18 @@ btnTheme.addEventListener(
 // POPUP CLOSE
 // ======================
 
-popupClose.addEventListener(
-    "click",
-    () => {
+if (popupClose) {
 
-        popupOverlay.classList.remove(
-            "active"
-        );
-    }
-);
+    popupClose.addEventListener(
+        "click",
+        () => {
+
+            popupOverlay.classList.remove(
+                "active"
+            );
+        }
+    );
+}
 
 // ======================
 // EXPORT PDF
