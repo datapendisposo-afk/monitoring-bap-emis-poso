@@ -1,1 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Progres BAP EMIS</title>
 
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+
+        <header>
+            <h1>Dashboard Progres BAP EMIS</h1>
+            <p>Monitoring status BAP Madrasah per Jenjang</p>
+        </header>
+
+        <div class="summary-cards">
+            <div class="card success">
+                <h2 id="totalBap">0</h2>
+                <span>Sudah BAP</span>
+            </div>
+
+            <div class="card danger">
+                <h2 id="totalBelum">0</h2>
+                <span>Belum BAP</span>
+            </div>
+
+            <div class="card info">
+                <h2 id="totalLembaga">0</h2>
+                <span>Total Lembaga</span>
+            </div>
+        </div>
+
+        <div class="chart-box">
+            <h3>Grafik Progres BAP per Jenjang</h3>
+            <canvas id="chartJenjang"></canvas>
+        </div>
+
+        <div class="table-section">
+            <h3>Detail Data Madrasah</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Jenjang</th>
+                        <th>Nama Lembaga</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
