@@ -44,6 +44,21 @@ const btnExport =
 const timerEl =
     document.getElementById("timer");
 
+const runningInfo =
+    document.getElementById("runningInfo");
+
+const runningTrack =
+    document.getElementById("runningTrack");
+
+const popupOverlay =
+    document.getElementById("popupOverlay");
+
+const popupContent =
+    document.getElementById("popupContent");
+
+const popupClose =
+    document.getElementById("popupClose");
+
 // ======================
 // GLOBAL
 // ======================
@@ -54,14 +69,14 @@ let charts = {};
 
 let countdown = 30;
 
-let infoData = [];
-
 let lastRekap = [];
 
 let lastSummary = {};
 
+let popupAlreadyShown = false;
+
 // ======================
-// HELPER STATUS
+// STATUS HELPER
 // ======================
 
 function isSudahBap(status) {
@@ -104,25 +119,43 @@ async function loadData() {
             return;
         }
 
-        allData = result.data || [];
-        
-        infoData = result.info || [];
-        renderInfo(infoData);
+        // ======================
+        // GLOBAL CACHE
+        // ======================
 
-        lastRekap = result.rekap || [];
+        allData =
+            result.data || [];
 
-        lastSummary = result.summary || {};
+        lastRekap =
+            result.rekap || [];
 
-        renderSummary(result.summary);
+        lastSummary =
+            result.summary || {};
+
+        // ======================
+        // RENDER
+        // ======================
+
+        renderSummary(
+            result.summary
+        );
 
         renderCharts(
             result.rekap,
             result.summary
         );
 
-        renderProgress(result.rekap);
+        renderProgress(
+            result.rekap
+        );
 
-        renderRanking(result.rekap);
+        renderRanking(
+            result.rekap
+        );
+
+        renderInfo(
+            result.info || []
+        );
 
         filterData();
 
@@ -133,13 +166,16 @@ async function loadData() {
             error
         );
 
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="4" class="loading">
-                    Gagal mengambil data
-                </td>
-            </tr>
-        `;
+        if (tableBody) {
+
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="loading">
+                        Gagal mengambil data
+                    </td>
+                </tr>
+            `;
+        }
     }
 }
 
@@ -147,7 +183,7 @@ async function loadData() {
 // SUMMARY
 // ======================
 
-function renderSummary(summary) {
+function renderSummary(summary = {}) {
 
     const total =
         Number(summary.total_madrasah || 0);
@@ -164,7 +200,9 @@ function renderSummary(summary) {
 
     const persen =
         total > 0
-        ? Math.round((sudah / total) * 100)
+        ? Math.round(
+            (sudah / total) * 100
+        )
         : 0;
 
     valPersen.innerText =
@@ -175,9 +213,9 @@ function renderSummary(summary) {
 // TABLE
 // ======================
 
-function renderTable(data) {
+function renderTable(data = []) {
 
-    if (!data || data.length === 0) {
+    if (!data.length) {
 
         tableBody.innerHTML = `
             <tr>
@@ -196,7 +234,9 @@ function renderTable(data) {
             return `
                 <tr>
 
-                    <td>${item.no || "-"}</td>
+                    <td>
+                        ${item.no || "-"}
+                    </td>
 
                     <td>
                         <span class="badge badge-jenjang">
@@ -209,6 +249,7 @@ function renderTable(data) {
                     </td>
 
                     <td>
+
                         <span class="
                             badge
                             ${isSudahBap(item.status_bap)
@@ -221,6 +262,7 @@ function renderTable(data) {
                                 : "Belum BAP"}
 
                         </span>
+
                     </td>
 
                 </tr>
@@ -259,26 +301,21 @@ function filterData() {
                     item.jenjang || ""
                 ).trim();
 
-            const statusValue =
+            const status =
                 isSudahBap(item.status_bap)
                 ? "SUDAH"
                 : "BELUM";
 
-            const matchSearch =
-                nama.includes(keyword);
-
-            const matchJenjang =
-                jenjang === "ALL" ||
-                itemJenjang === jenjang;
-
-            const matchStatus =
-                statusFilter === "ALL" ||
-                statusValue === statusFilter;
-
             return (
-                matchSearch &&
-                matchJenjang &&
-                matchStatus
+                nama.includes(keyword) &&
+                (
+                    jenjang === "ALL" ||
+                    itemJenjang === jenjang
+                ) &&
+                (
+                    statusFilter === "ALL" ||
+                    status === statusFilter
+                )
             );
         });
 
@@ -286,28 +323,31 @@ function filterData() {
 }
 
 // ======================
-// INFO / PENGUMUMAN
+// INFO
 // ======================
 
-function getCountdownDays(dateString){
+function getCountdownDays(dateString) {
 
-    if(!dateString) return 0;
+    if (!dateString) return 0;
 
-    const target = new Date(dateString);
+    const target =
+        new Date(dateString);
 
-    const today = new Date();
+    const today =
+        new Date();
 
     target.setHours(0,0,0,0);
     today.setHours(0,0,0,0);
 
-    const diff = target - today;
+    const diff =
+        target - today;
 
     return Math.ceil(
         diff / (1000 * 60 * 60 * 24)
     );
 }
 
-function buildInfoText(item){
+function buildInfoText(item) {
 
     const tipe =
         String(item.tipe || "")
@@ -317,18 +357,16 @@ function buildInfoText(item){
     const uraian =
         item.uraian || "";
 
-    if(tipe === "hitungan"){
+    if (tipe === "hitungan") {
 
         const days =
             getCountdownDays(item.tanggal);
 
-        if(days > 0){
-
+        if (days > 0) {
             return `⏳ ${uraian} ${days} hari lagi`;
         }
 
-        if(days === 0){
-
+        if (days === 0) {
             return `⚠️ ${uraian} hari ini`;
         }
 
@@ -338,43 +376,26 @@ function buildInfoText(item){
     return `📢 ${uraian}`;
 }
 
-function renderInfo(data){
+function renderInfo(data = []) {
 
-    if(!data || data.length === 0){
-        return;
-    }
+    if (!data.length) return;
 
-    const activeInfo = data.filter(item => {
+    const activeInfo =
+        data.filter(item => {
 
-        return (
-            String(item.status || "")
-                .toLowerCase()
-                .trim() === "tampilkan"
-        );
-    });
+            return (
+                String(item.status || "")
+                    .toLowerCase()
+                    .trim() === "tampilkan"
+            );
+        });
 
-    if(activeInfo.length === 0){
-        return;
-    }
-
-    const runningContainer =
-        document.getElementById("runningInfo");
-
-    const runningTrack =
-        document.getElementById("runningTrack");
-
-    const popupOverlay =
-        document.getElementById("popupOverlay");
-
-    const popupContent =
-        document.getElementById("popupContent");
-
-    const popupClose =
-        document.getElementById("popupClose");
+    if (!activeInfo.length) return;
 
     // RESET
     runningTrack.innerHTML = "";
-    popupContent.innerHTML = "";
+
+    let popupHTML = "";
 
     activeInfo.forEach(item => {
 
@@ -386,63 +407,64 @@ function renderInfo(data){
         const content =
             buildInfoText(item);
 
+        // ======================
         // RUNNING TEXT
-        if(jenis === "runing" || jenis === "running"){
+        // ======================
 
-            runningContainer.style.display = "flex";
+        if (
+            jenis === "runing" ||
+            jenis === "running"
+        ) {
+
+            runningInfo.style.display =
+                "flex";
 
             runningTrack.innerHTML += `
-                <span style="margin-right:120px;">
+                <span class="running-item">
                     ${content}
                 </span>
             `;
         }
 
+        // ======================
         // POPUP
-        if(jenis === "popup"){
+        // ======================
 
-            popupOverlay.classList.add("active");
+        if (jenis === "popup") {
 
-            popupContent.innerHTML += `
-                <div style="margin-bottom:18px;">
+            popupHTML += `
+                <div class="popup-item">
                     ${content}
                 </div>
             `;
         }
     });
 
-    popupClose.addEventListener(
-        "click",
-        () => {
-            popupOverlay.classList.remove("active");
-        }
-    );
+    // ======================
+    // SHOW POPUP ONCE
+    // ======================
+
+    if (
+        popupHTML &&
+        !popupAlreadyShown
+    ) {
+
+        popupContent.innerHTML =
+            popupHTML;
+
+        popupOverlay.classList.add(
+            "active"
+        );
+
+        popupAlreadyShown = true;
+    }
 }
-
-// ======================
-// SEARCH EVENT
-// ======================
-
-searchInput.addEventListener(
-    "input",
-    filterData
-);
-
-filterJenjang.addEventListener(
-    "change",
-    filterData
-);
-
-filterStatusBap.addEventListener(
-    "change",
-    filterData
-);
 
 // ======================
 // CHARTS
 // ======================
 
-function renderCharts(rekap, summary) {
+function renderCharts(rekap = [], summary = {}) {
 
     const labels =
         rekap.map(r => r.Jenjang);
@@ -462,7 +484,6 @@ function renderCharts(rekap, summary) {
             Number(r["Total"])
         );
 
-    // BAR
     initChart(
         "barChart",
         "bar",
@@ -489,7 +510,6 @@ function renderCharts(rekap, summary) {
         }
     );
 
-    // PIE
     initChart(
         "pieChart",
         "pie",
@@ -503,8 +523,8 @@ function renderCharts(rekap, summary) {
 
                 {
                     data: [
-                        summary.sudah_bap,
-                        summary.belum_bap
+                        summary.sudah_bap || 0,
+                        summary.belum_bap || 0
                     ],
 
                     backgroundColor: [
@@ -517,7 +537,6 @@ function renderCharts(rekap, summary) {
         }
     );
 
-    // DONUT
     initChart(
         "donutChart",
         "doughnut",
@@ -555,81 +574,82 @@ function initChart(id, type, data) {
 
     if (!canvas) return;
 
-    const ctx =
-        canvas.getContext("2d");
-
     if (charts[id]) {
         charts[id].destroy();
     }
 
-    charts[id] = new Chart(ctx, {
+    charts[id] =
+        new Chart(
+            canvas.getContext("2d"),
+            {
 
-        type: type,
+                type,
 
-        data: data,
+                data,
 
-        options: {
+                options: {
 
-            responsive: true,
+                    responsive: true,
 
-            maintainAspectRatio: false,
+                    maintainAspectRatio: false,
 
-            plugins: {
+                    plugins: {
 
-                legend: {
+                        legend: {
 
-                    position: "bottom",
+                            position: "bottom",
 
-                    labels: {
-
-                        color: getTextColor()
-                    }
-                }
-            },
-
-            scales:
-                type === "bar"
-                ? {
-
-                    x: {
-
-                        ticks: {
-                            color: getTextColor()
-                        },
-
-                        grid: {
-                            color:
-                            "rgba(255,255,255,0.05)"
+                            labels: {
+                                color:
+                                    getTextColor()
+                            }
                         }
                     },
 
-                    y: {
+                    scales:
+                        type === "bar"
+                        ? {
 
-                        beginAtZero: true,
+                            x: {
 
-                        ticks: {
-                            color: getTextColor()
-                        },
+                                ticks: {
+                                    color:
+                                        getTextColor()
+                                },
 
-                        grid: {
-                            color:
-                            "rgba(255,255,255,0.05)"
+                                grid: {
+                                    color:
+                                    "rgba(255,255,255,0.05)"
+                                }
+                            },
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                ticks: {
+                                    color:
+                                        getTextColor()
+                                },
+
+                                grid: {
+                                    color:
+                                    "rgba(255,255,255,0.05)"
+                                }
+                            }
+
                         }
-                    }
-
+                        : {}
                 }
-                : {}
-
-        }
-
-    });
+            }
+        );
 }
 
 // ======================
 // PROGRESS
 // ======================
 
-function renderProgress(rekap) {
+function renderProgress(rekap = []) {
 
     progressContainer.innerHTML =
         rekap.map(item => {
@@ -642,7 +662,9 @@ function renderProgress(rekap) {
 
             const persen =
                 total > 0
-                ? Math.round((sudah / total) * 100)
+                ? Math.round(
+                    (sudah / total) * 100
+                )
                 : 0;
 
             return `
@@ -678,7 +700,7 @@ function renderProgress(rekap) {
 // RANKING
 // ======================
 
-function renderRanking(rekap) {
+function renderRanking(rekap = []) {
 
     const sorted =
         [...rekap].sort((a, b) => {
@@ -743,7 +765,9 @@ btnTheme.addEventListener(
             document.documentElement;
 
         const current =
-            html.getAttribute("data-theme");
+            html.getAttribute(
+                "data-theme"
+            );
 
         const next =
             current === "dark"
@@ -768,12 +792,26 @@ btnTheme.addEventListener(
 );
 
 // ======================
+// POPUP CLOSE
+// ======================
+
+popupClose.addEventListener(
+    "click",
+    () => {
+
+        popupOverlay.classList.remove(
+            "active"
+        );
+    }
+);
+
+// ======================
 // EXPORT PDF
 // ======================
 
 btnExport.addEventListener(
     "click",
-    () => {
+    async () => {
 
         const element =
             document.getElementById(
@@ -783,45 +821,45 @@ btnExport.addEventListener(
         const { jsPDF } =
             window.jspdf;
 
-        html2canvas(element, {
-            scale: 2
-        }).then(canvas => {
+        const canvas =
+            await html2canvas(
+                element,
+                { scale: 2 }
+            );
 
-            const imgData =
-                canvas.toDataURL(
-                    "image/png"
-                );
+        const imgData =
+            canvas.toDataURL(
+                "image/png"
+            );
 
-            const pdf =
-                new jsPDF(
-                    "p",
-                    "mm",
-                    "a4"
-                );
+        const pdf =
+            new jsPDF(
+                "p",
+                "mm",
+                "a4"
+            );
 
-            const width =
-                pdf.internal
-                    .pageSize
-                    .getWidth();
+        const width =
+            pdf.internal.pageSize.getWidth();
 
-            const height =
+        const height =
+            (
                 canvas.height *
-                width /
-                canvas.width;
+                width
+            ) / canvas.width;
 
-            pdf.addImage(
-                imgData,
-                "PNG",
-                0,
-                0,
-                width,
-                height
-            );
+        pdf.addImage(
+            imgData,
+            "PNG",
+            0,
+            0,
+            width,
+            height
+        );
 
-            pdf.save(
-                "Dashboard-BAP-EMIS.pdf"
-            );
-        });
+        pdf.save(
+            "Dashboard-BAP-EMIS.pdf"
+        );
     }
 );
 
@@ -859,6 +897,25 @@ function getTextColor() {
         ? "#94a3b8"
         : "#475569";
 }
+
+// ======================
+// EVENTS
+// ======================
+
+searchInput.addEventListener(
+    "input",
+    filterData
+);
+
+filterJenjang.addEventListener(
+    "change",
+    filterData
+);
+
+filterStatusBap.addEventListener(
+    "change",
+    filterData
+);
 
 // ======================
 // INITIAL LOAD
