@@ -54,6 +54,29 @@ let charts = {};
 
 let countdown = 30;
 
+let lastRekap = [];
+
+let lastSummary = {};
+
+// ======================
+// HELPER STATUS
+// ======================
+
+function isSudahBap(status) {
+
+    const value =
+        String(status || "")
+            .toLowerCase()
+            .trim();
+
+    return (
+        value === "1" ||
+        value === "sudah" ||
+        value === "sudah bap" ||
+        value === "true"
+    );
+}
+
 // ======================
 // LOAD DATA
 // ======================
@@ -79,29 +102,23 @@ async function loadData() {
             return;
         }
 
-        // UPDATE GLOBAL DATA
         allData = result.data || [];
 
-        // CACHE
         lastRekap = result.rekap || [];
+
         lastSummary = result.summary || {};
 
-        // UPDATE SUMMARY
         renderSummary(result.summary);
 
-        // UPDATE CHARTS
         renderCharts(
             result.rekap,
             result.summary
         );
 
-        // UPDATE PROGRESS
         renderProgress(result.rekap);
 
-        // UPDATE RANKING
         renderRanking(result.rekap);
 
-        // RENDER TABLE DENGAN FILTER
         filterData();
 
     } catch (error) {
@@ -152,20 +169,7 @@ function renderSummary(summary) {
 // ======================
 // TABLE
 // ======================
-function isSudahBap(status) {
 
-    const value =
-        String(status || "")
-            .toLowerCase()
-            .trim();
-
-    return (
-        value === "1" ||
-        value === "sudah" ||
-        value === "sudah bap" ||
-        value === "true"
-    );
-}
 function renderTable(data) {
 
     if (!data || data.length === 0) {
@@ -185,7 +189,6 @@ function renderTable(data) {
         data.map(item => {
 
             return `
-
                 <tr>
 
                     <td>${item.no || "-"}</td>
@@ -201,7 +204,6 @@ function renderTable(data) {
                     </td>
 
                     <td>
-
                         <span class="
                             badge
                             ${isSudahBap(item.status_bap)
@@ -214,11 +216,9 @@ function renderTable(data) {
                                 : "Belum BAP"}
 
                         </span>
-
                     </td>
 
                 </tr>
-
             `;
 
         }).join("");
@@ -254,33 +254,18 @@ function filterData() {
                     item.jenjang || ""
                 ).trim();
 
-            // NORMALISASI STATUS
-            const rawStatus =
-                String(item.status_bap || "")
-                    .toLowerCase()
-                    .trim();
-
-            const isSudah =
-                rawStatus === "1" ||
-                rawStatus === "sudah" ||
-                rawStatus === "sudah bap" ||
-                rawStatus === "true";
-
             const statusValue =
-                isSudah
+                isSudahBap(item.status_bap)
                 ? "SUDAH"
                 : "BELUM";
 
-            // SEARCH
             const matchSearch =
                 nama.includes(keyword);
 
-            // JENJANG
             const matchJenjang =
                 jenjang === "ALL" ||
                 itemJenjang === jenjang;
 
-            // STATUS
             const matchStatus =
                 statusFilter === "ALL" ||
                 statusValue === statusFilter;
@@ -296,17 +281,13 @@ function filterData() {
 }
 
 // ======================
-// SEARCH EVENT
+// EVENT
 // ======================
 
 searchInput.addEventListener(
     "input",
     filterData
 );
-
-// ======================
-// FILTER EVENT
-// ======================
 
 filterJenjang.addEventListener(
     "change",
@@ -319,7 +300,7 @@ filterStatusBap.addEventListener(
 );
 
 // ======================
-// CHART
+// CHARTS
 // ======================
 
 function renderCharts(rekap, summary) {
@@ -364,6 +345,7 @@ function renderCharts(rekap, summary) {
                     backgroundColor: "#ef4444",
                     borderRadius: 10
                 }
+
             ]
         }
     );
@@ -391,6 +373,7 @@ function renderCharts(rekap, summary) {
                         "#ef4444"
                     ]
                 }
+
             ]
         }
     );
@@ -416,6 +399,7 @@ function renderCharts(rekap, summary) {
 
                     borderWidth: 0
                 }
+
             ]
         }
     );
@@ -441,9 +425,9 @@ function initChart(id, type, data) {
 
     charts[id] = new Chart(ctx, {
 
-        type,
+        type: type,
 
-        data,
+        data: data,
 
         options: {
 
@@ -493,9 +477,12 @@ function initChart(id, type, data) {
                             "rgba(255,255,255,0.05)"
                         }
                     }
+
                 }
                 : {}
+
         }
+
     });
 }
 
@@ -520,7 +507,6 @@ function renderProgress(rekap) {
                 : 0;
 
             return `
-
                 <div class="progress-item">
 
                     <div class="progress-title">
@@ -545,7 +531,6 @@ function renderProgress(rekap) {
                     </div>
 
                 </div>
-
             `;
         }).join("");
 }
@@ -584,7 +569,6 @@ function renderRanking(rekap) {
                 : 0;
 
             return `
-
                 <div class="rank-item">
 
                     <div class="rank-left">
@@ -604,7 +588,6 @@ function renderRanking(rekap) {
                     </div>
 
                 </div>
-
             `;
         }).join("");
 }
@@ -638,7 +621,6 @@ btnTheme.addEventListener(
             ? "🌙 Dark Mode"
             : "☀️ Light Mode";
 
-        // REFRESH CHART COLOR
         renderCharts(
             lastRekap,
             lastSummary
@@ -663,9 +645,7 @@ btnExport.addEventListener(
             window.jspdf;
 
         html2canvas(element, {
-
             scale: 2
-
         }).then(canvas => {
 
             const imgData =
@@ -740,13 +720,6 @@ function getTextColor() {
         ? "#94a3b8"
         : "#475569";
 }
-
-// ======================
-// CACHE
-// ======================
-
-let lastRekap = [];
-let lastSummary = {};
 
 // ======================
 // INITIAL LOAD
