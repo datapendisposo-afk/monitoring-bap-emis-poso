@@ -200,6 +200,118 @@ RUNNING TEXT
 }
 
 /* ======================
+   POPUP FIX
+====================== */
+
+.popup-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    background:rgba(0,0,0,0.65);
+
+    backdrop-filter:blur(8px);
+
+    z-index:99999;
+}
+
+.popup-overlay.active{
+
+    display:flex;
+}
+
+.popup-box{
+
+    width:100%;
+    max-width:520px;
+
+    background:var(--card);
+
+    border:1px solid var(--border);
+
+    border-radius:28px;
+
+    padding:28px;
+
+    position:relative;
+
+    animation:popupShow 0.3s ease;
+}
+
+.popup-close{
+
+    position:absolute;
+
+    top:14px;
+    right:14px;
+
+    width:36px;
+    height:36px;
+
+    border:none;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    background:rgba(255,255,255,0.08);
+
+    color:var(--text);
+
+    font-size:18px;
+
+    transition:0.2s ease;
+}
+
+.popup-close:hover{
+
+    transform:scale(1.05);
+
+    background:rgba(255,255,255,0.15);
+}
+
+.popup-header{
+
+    margin-bottom:18px;
+}
+
+.popup-header h2{
+
+    font-size:22px;
+
+    font-weight:700;
+}
+
+.popup-content{
+
+    line-height:1.7;
+
+    color:var(--text);
+
+    font-size:15px;
+}
+
+@keyframes popupShow{
+
+    from{
+        opacity:0;
+        transform:translateY(20px) scale(0.96);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+}
+/* ======================
 BUTTON
 ====================== */
 
