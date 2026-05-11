@@ -48,7 +48,7 @@ const timerEl =
 // RUNNING TEXT
 // ======================
 
-const runningContainer =
+const runningInfo =
     document.getElementById("runningInfo");
 
 const runningTrack =
@@ -115,7 +115,6 @@ async function loadData() {
 
         const result =
             await response.json();
-        console.log("INFO DATA:", result.info);
 
         console.log(result);
 
@@ -387,25 +386,16 @@ function buildInfoText(item) {
 
 function renderInfo(data = []) {
 
-    if (!runningContainer ||
-        !runningTrack ||
-        !popupOverlay ||
-        !popupContent) {
-
-        console.error("Element info tidak ditemukan");
-        return;
-    }
-
     // RESET
-    runningContainer.style.display = "none";
-
-    runningTrack.innerHTML = "";
-
-    popupContent.innerHTML = "";
-
-    if (!data.length) {
-        return;
+    if (runningInfo) {
+        runningInfo.style.display = "none";
     }
+
+    if (runningTrack) {
+        runningTrack.innerHTML = "";
+    }
+
+    if (!data.length) return;
 
     const activeInfo =
         data.filter(item => {
@@ -417,11 +407,7 @@ function renderInfo(data = []) {
             );
         });
 
-    console.log("ACTIVE INFO:", activeInfo);
-
-    if (!activeInfo.length) {
-        return;
-    }
+    if (!activeInfo.length) return;
 
     let popupHTML = "";
 
@@ -444,14 +430,18 @@ function renderInfo(data = []) {
             jenis === "running"
         ) {
 
-            runningContainer.style.display =
-                "flex";
+            if (runningInfo) {
+                runningInfo.style.display = "flex";
+            }
 
-            runningTrack.innerHTML += `
-                <span class="running-item">
-                    ${content}
-                </span>
-            `;
+            if (runningTrack) {
+
+                runningTrack.innerHTML += `
+                    <span class="running-item">
+                        ${content}
+                    </span>
+                `;
+            }
         }
 
         // ======================
@@ -477,12 +467,16 @@ function renderInfo(data = []) {
         !popupAlreadyShown
     ) {
 
-        popupContent.innerHTML =
-            popupHTML;
+        if (popupContent) {
+            popupContent.innerHTML =
+                popupHTML;
+        }
 
-        popupOverlay.classList.add(
-            "active"
-        );
+        if (popupOverlay) {
+            popupOverlay.classList.add(
+                "active"
+            );
+        }
 
         popupAlreadyShown = true;
     }
