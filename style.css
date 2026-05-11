@@ -3,8 +3,8 @@ RESET
 ====================== */
 
 *{
-    margin:10;
-    padding:10;
+    margin:0;
+    padding:0;
     box-sizing:border-box;
     font-family:'Poppins',sans-serif;
 }
@@ -72,6 +72,11 @@ body{
     transition:
         background 0.3s ease,
         color 0.3s ease;
+    
+    /* MEMBATASI LEBAR BODY TIDAK FULL LAYAR */
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 /* ======================
@@ -157,12 +162,12 @@ CONTAINER
 }
 
 /* ======================
-HEADER
+HEADER - TIDAK BERGERAK (RELATIVE)
 ====================== */
 
 .header{
 
-    position: fixed;
+    position: relative; /* DIUBAH DARI fixed MENJADI relative */
 
     top:0;
 
@@ -1199,6 +1204,11 @@ RESPONSIVE
 
         align-items:flex-start;
     }
+    
+    /* RESPONSIVE UNTUK BODY */
+    body{
+        padding: 0 16px;
+    }
 }
 
 @media(max-width:480px){
@@ -1228,5 +1238,10 @@ RESPONSIVE
         padding:10px 14px;
 
         font-size:13px;
+    }
+    
+    /* RESPONSIVE UNTUK BODY */
+    body{
+        padding: 0 12px;
     }
 }
