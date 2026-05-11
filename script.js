@@ -105,6 +105,9 @@ async function loadData() {
         }
 
         allData = result.data || [];
+        
+        infoData = result.info || [];
+        renderInfo(infoData);
 
         lastRekap = result.rekap || [];
 
@@ -283,7 +286,141 @@ function filterData() {
 }
 
 // ======================
-// EVENT
+// INFO / PENGUMUMAN
+// ======================
+
+function getCountdownDays(dateString){
+
+    if(!dateString) return 0;
+
+    const target = new Date(dateString);
+
+    const today = new Date();
+
+    target.setHours(0,0,0,0);
+    today.setHours(0,0,0,0);
+
+    const diff = target - today;
+
+    return Math.ceil(
+        diff / (1000 * 60 * 60 * 24)
+    );
+}
+
+function buildInfoText(item){
+
+    const tipe =
+        String(item.tipe || "")
+            .toLowerCase()
+            .trim();
+
+    const uraian =
+        item.uraian || "";
+
+    if(tipe === "hitungan"){
+
+        const days =
+            getCountdownDays(item.tanggal);
+
+        if(days > 0){
+
+            return `⏳ ${uraian} ${days} hari lagi`;
+        }
+
+        if(days === 0){
+
+            return `⚠️ ${uraian} hari ini`;
+        }
+
+        return `✅ ${uraian} telah berakhir`;
+    }
+
+    return `📢 ${uraian}`;
+}
+
+function renderInfo(data){
+
+    if(!data || data.length === 0){
+        return;
+    }
+
+    const activeInfo = data.filter(item => {
+
+        return (
+            String(item.status || "")
+                .toLowerCase()
+                .trim() === "tampilkan"
+        );
+    });
+
+    if(activeInfo.length === 0){
+        return;
+    }
+
+    const runningContainer =
+        document.getElementById("runningInfo");
+
+    const runningTrack =
+        document.getElementById("runningTrack");
+
+    const popupOverlay =
+        document.getElementById("popupOverlay");
+
+    const popupContent =
+        document.getElementById("popupContent");
+
+    const popupClose =
+        document.getElementById("popupClose");
+
+    // RESET
+    runningTrack.innerHTML = "";
+    popupContent.innerHTML = "";
+
+    activeInfo.forEach(item => {
+
+        const jenis =
+            String(item.jenis || "")
+                .toLowerCase()
+                .trim();
+
+        const content =
+            buildInfoText(item);
+
+        // RUNNING TEXT
+        if(jenis === "runing" || jenis === "running"){
+
+            runningContainer.style.display = "flex";
+
+            runningTrack.innerHTML += `
+                <span style="margin-right:120px;">
+                    ${content}
+                </span>
+            `;
+        }
+
+        // POPUP
+        if(jenis === "popup"){
+
+            popupOverlay.classList.add("active");
+
+            popupContent.innerHTML += `
+                <div style="margin-bottom:18px;">
+                    ${content}
+                </div>
+            `;
+        }
+    });
+
+    popupClose.addEventListener(
+        "click",
+        () => {
+            popupOverlay.classList.remove("active");
+        }
+    );
+}
+
+// ======================
+// SEARCH EVENT
 // ======================
 
 searchInput.addEventListener(
