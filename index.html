@@ -39,23 +39,23 @@
 <body>
 
     <!-- =========================
-    BACKGROUND BLOB
+    BACKGROUND
     ========================= -->
 
     <div class="bg-blob blob1"></div>
     <div class="bg-blob blob2"></div>
 
     <!-- =========================
-    POPUP INFO
+    POPUP
     ========================= -->
-    
+
     <div
         class="popup-overlay"
         id="popupOverlay"
     >
-    
+
         <div class="popup-box">
-    
+
             <button
                 type="button"
                 class="popup-close"
@@ -64,81 +64,88 @@
             >
                 ✕
             </button>
-    
+
             <div class="popup-header">
-    
+
                 <h2>
                     📢 Informasi Penting
                 </h2>
-    
+
             </div>
-    
+
             <div
                 class="popup-content"
                 id="popupContent"
             ></div>
-    
+
         </div>
-    
+
     </div>
-    
+
     <!-- =========================
-    MAIN CONTAINER
+    MAIN WRAPPER
     ========================= -->
-    
-    <div
-        class="container"
+
+    <main
+        class="main-wrapper"
         id="capture-area"
     >
-    
-        <!-- HEADER -->
+
+        <!-- =========================
+        HEADER
+        ========================= -->
+
         <header class="header">
-    
-            <div>
-    
+
+            <div class="header-left">
+
                 <h1>
                     Dashboard Progres BAP EMIS
                 </h1>
-    
+
                 <p>
                     Monitoring Status Berita Acara Pendataan EMIS Madrasah
                 </p>
-    
+
             </div>
-    
+
             <div class="header-actions">
-    
+
                 <button
                     class="btn"
                     id="btnTheme"
+                    type="button"
                 >
                     🌙 Dark Mode
                 </button>
-    
+
                 <button
                     class="btn primary"
                     id="btnExport"
+                    type="button"
                 >
                     📄 Export PDF
                 </button>
-    
+
             </div>
-    
+
         </header>
-    
-        <!-- RUNNING TEXT -->
-        <div
+
+        <!-- =========================
+        RUNNING INFO
+        ========================= -->
+
+        <section
             class="running-info"
             id="runningInfo"
         >
-    
+
             <div
                 class="running-track"
                 id="runningTrack"
             ></div>
-    
-        </div>
 
+        </section>
 
         <!-- =========================
         SUMMARY
@@ -189,12 +196,11 @@
         </section>
 
         <!-- =========================
-        CHART
+        CHARTS
         ========================= -->
 
         <section class="charts-grid">
 
-            <!-- BAR -->
             <div class="card large">
 
                 <div class="card-title">
@@ -207,7 +213,6 @@
 
             </div>
 
-            <!-- PIE -->
             <div class="card">
 
                 <div class="card-title">
@@ -220,7 +225,6 @@
 
             </div>
 
-            <!-- DONUT -->
             <div class="card">
 
                 <div class="card-title">
@@ -236,12 +240,11 @@
         </section>
 
         <!-- =========================
-        PROGRESS & RANKING
+        PROGRESS
         ========================= -->
 
         <section class="progress-grid">
 
-            <!-- PROGRESS -->
             <div class="card">
 
                 <div class="card-title">
@@ -252,7 +255,6 @@
 
             </div>
 
-            <!-- RANKING -->
             <div class="card">
 
                 <div class="card-title">
@@ -266,7 +268,7 @@
         </section>
 
         <!-- =========================
-        TOOLBAR
+        FILTER
         ========================= -->
 
         <section class="toolbar">
@@ -316,11 +318,13 @@
 
                     <span class="dot"></span>
 
-                    Auto Refresh:
+                    <span>
+                        Auto Refresh:
+                    </span>
 
-                    <span id="timer">
+                    <strong id="timer">
                         30
-                    </span>s
+                    </strong>s
 
                 </div>
 
@@ -412,7 +416,7 @@
 
         </footer>
 
-    </div>
+    </main>
 
     <!-- =========================
     SCRIPT
