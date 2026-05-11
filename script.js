@@ -1,15 +1,24 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxauRyQz6eSVPdh0NJKhRp64V7vYufiLoc8PdPoEblgwdXP-1usfzJLPZQ8HDJ54HEc/exec";
+const API_URL =
+    "https://script.google.com/macros/s/AKfycbxauRyQz6eSVPdh0NJKhRp64V7vYufiLoc8PdPoEblgwdXP-1usfzJLPZQ8HDJ54HEc/exec";
 
 // ======================
 // ELEMENT
 // ======================
 
-const tableBody = document.getElementById("tableBody");
+const tableBody =
+    document.getElementById("tableBody");
 
-const valSudah = document.getElementById("valSudah");
-const valBelum = document.getElementById("valBelum");
-const valTotal = document.getElementById("valTotal");
-const valPersen = document.getElementById("valPersen");
+const valSudah =
+    document.getElementById("valSudah");
+
+const valBelum =
+    document.getElementById("valBelum");
+
+const valTotal =
+    document.getElementById("valTotal");
+
+const valPersen =
+    document.getElementById("valPersen");
 
 const progressContainer =
     document.getElementById("progressContainer");
@@ -50,42 +59,52 @@ async function loadData() {
 
     try {
 
-        const response = await fetch(API_URL);
+        const response =
+            await fetch(API_URL);
 
-        const result = await response.json();
+        const result =
+            await response.json();
 
         console.log(result);
 
         if (!result.status) {
 
-            alert("Gagal mengambil data");
+            console.error(
+                "Response status false"
+            );
 
             return;
         }
 
-        allData = result.data;
+        // UPDATE GLOBAL DATA
+        allData = result.data || [];
 
-        // SUMMARY
+        // UPDATE SUMMARY
         renderSummary(result.summary);
 
-        // TABLE FILTERED
-        filterData();
-
-        // CHART
+        // UPDATE CHARTS
         renderCharts(
             result.rekap,
             result.summary
         );
 
-        // PROGRESS
+        // UPDATE PROGRESS
         renderProgress(result.rekap);
 
-        // RANKING
+        // UPDATE RANKING
         renderRanking(result.rekap);
+
+        // PENTING:
+        // JANGAN renderTable(allData)
+        // HARUS filterData()
+        filterData();
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Fetch Error:",
+            error
+        );
 
         tableBody.innerHTML = `
             <tr>
@@ -103,20 +122,23 @@ async function loadData() {
 
 function renderSummary(summary) {
 
-    valSudah.innerText =
-        summary.sudah_bap;
+    const total =
+        Number(summary.total_madrasah || 0);
 
-    valBelum.innerText =
-        summary.belum_bap;
+    const sudah =
+        Number(summary.sudah_bap || 0);
 
-    valTotal.innerText =
-        summary.total_madrasah;
+    const belum =
+        Number(summary.belum_bap || 0);
+
+    valSudah.innerText = sudah;
+    valBelum.innerText = belum;
+    valTotal.innerText = total;
 
     const persen =
-        Math.round(
-            (summary.sudah_bap /
-            summary.total_madrasah) * 100
-        );
+        total > 0
+        ? Math.round((sudah / total) * 100)
+        : 0;
 
     valPersen.innerText =
         persen + "%";
@@ -128,7 +150,7 @@ function renderSummary(summary) {
 
 function renderTable(data) {
 
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
 
         tableBody.innerHTML = `
             <tr>
@@ -141,70 +163,136 @@ function renderTable(data) {
         return;
     }
 
-    tableBody.innerHTML = data.map(item => `
+    tableBody.innerHTML =
+        data.map(item => `
 
-        <tr>
+            <tr>
 
-            <td>${item.no}</td>
+                <td>${item.no || "-"}</td>
 
-            <td>
-                <span class="badge badge-jenjang">
-                    ${item.jenjang}
-                </span>
-            </td>
+                <td>
+                    <span class="badge badge-jenjang">
+                        ${item.jenjang || "-"}
+                    </span>
+                </td>
 
-            <td>${item.nama_lembaga}</td>
+                <td>
+                    ${item.nama_lembaga || "-"}
+                </td>
 
-            <td>
-                <span class="
-                    badge
-                    ${item.status_bap == 1
-                        ? 'badge-success'
-                        : 'badge-danger'}
-                ">
+                <td>
 
-                    ${item.status_bap == 1
-                        ? 'Sudah BAP'
-                        : 'Belum BAP'}
+                    <span class="
+                        badge
+                        ${Number(item.status_bap) === 1
+                            ? "badge-success"
+                            : "badge-danger"}
+                    ">
 
-                </span>
-            </td>
+                        ${Number(item.status_bap) === 1
+                            ? "Sudah BAP"
+                            : "Belum BAP"}
 
-        </tr>
+                    </span>
 
-    `).join('');
+                </td>
+
+            </tr>
+
+        `).join("");
 }
 
 // ======================
-// CHARTS
+// FILTER
+// ======================
+
+function filterData() {
+
+    const keyword =
+        searchInput.value
+            .toLowerCase()
+            .trim();
+
+    const jenjang =
+        filterJenjang.value;
+
+    const filtered =
+        allData.filter(item => {
+
+            const nama =
+                String(
+                    item.nama_lembaga || ""
+                ).toLowerCase();
+
+            const itemJenjang =
+                String(
+                    item.jenjang || ""
+                ).trim();
+
+            const matchSearch =
+                nama.includes(keyword);
+
+            const matchJenjang =
+                jenjang === "ALL" ||
+                itemJenjang === jenjang;
+
+            return (
+                matchSearch &&
+                matchJenjang
+            );
+        });
+
+    renderTable(filtered);
+}
+
+// ======================
+// SEARCH EVENT
+// ======================
+
+searchInput.addEventListener(
+    "input",
+    filterData
+);
+
+// ======================
+// FILTER EVENT
+// ======================
+
+filterJenjang.addEventListener(
+    "change",
+    filterData
+);
+
+// ======================
+// CHART
 // ======================
 
 function renderCharts(rekap, summary) {
 
     const labels =
-        rekap.map(item => item.Jenjang);
+        rekap.map(r => r.Jenjang);
 
     const sudah =
-        rekap.map(item =>
-            Number(item["Sudah BAP"])
+        rekap.map(r =>
+            Number(r["Sudah BAP"])
         );
 
     const belum =
-        rekap.map(item =>
-            Number(item["Belum BAP"])
+        rekap.map(r =>
+            Number(r["Belum BAP"])
         );
 
     const total =
-        rekap.map(item =>
-            Number(item["Total"])
+        rekap.map(r =>
+            Number(r["Total"])
         );
 
-    // BAR CHART
+    // BAR
     initChart(
         "barChart",
         "bar",
         {
-            labels: labels,
+            labels,
 
             datasets: [
 
@@ -257,7 +345,7 @@ function renderCharts(rekap, summary) {
         "donutChart",
         "doughnut",
         {
-            labels: labels,
+            labels,
 
             datasets: [
 
@@ -284,21 +372,23 @@ function renderCharts(rekap, summary) {
 
 function initChart(id, type, data) {
 
+    const canvas =
+        document.getElementById(id);
+
+    if (!canvas) return;
+
     const ctx =
-        document
-            .getElementById(id)
-            .getContext("2d");
+        canvas.getContext("2d");
 
     if (charts[id]) {
-
         charts[id].destroy();
     }
 
     charts[id] = new Chart(ctx, {
 
-        type: type,
+        type,
 
-        data: data,
+        data,
 
         options: {
 
@@ -319,7 +409,8 @@ function initChart(id, type, data) {
                 }
             },
 
-            scales: type === "bar"
+            scales:
+                type === "bar"
                 ? {
 
                     x: {
@@ -329,7 +420,8 @@ function initChart(id, type, data) {
                         },
 
                         grid: {
-                            color: "rgba(255,255,255,0.05)"
+                            color:
+                            "rgba(255,255,255,0.05)"
                         }
                     },
 
@@ -342,7 +434,8 @@ function initChart(id, type, data) {
                         },
 
                         grid: {
-                            color: "rgba(255,255,255,0.05)"
+                            color:
+                            "rgba(255,255,255,0.05)"
                         }
                     }
                 }
@@ -360,11 +453,16 @@ function renderProgress(rekap) {
     progressContainer.innerHTML =
         rekap.map(item => {
 
+            const total =
+                Number(item["Total"]);
+
+            const sudah =
+                Number(item["Sudah BAP"]);
+
             const persen =
-                Math.round(
-                    (item["Sudah BAP"] /
-                    item["Total"]) * 100
-                );
+                total > 0
+                ? Math.round((sudah / total) * 100)
+                : 0;
 
             return `
 
@@ -394,7 +492,7 @@ function renderProgress(rekap) {
                 </div>
 
             `;
-        }).join('');
+        }).join("");
 }
 
 // ======================
@@ -406,20 +504,29 @@ function renderRanking(rekap) {
     const sorted =
         [...rekap].sort((a, b) => {
 
-            return (
-                (b["Sudah BAP"] / b["Total"]) -
-                (a["Sudah BAP"] / a["Total"])
-            );
+            const persenA =
+                a["Total"] > 0
+                ? a["Sudah BAP"] / a["Total"]
+                : 0;
+
+            const persenB =
+                b["Total"] > 0
+                ? b["Sudah BAP"] / b["Total"]
+                : 0;
+
+            return persenB - persenA;
         });
 
     rankingContainer.innerHTML =
         sorted.map((item, index) => {
 
             const persen =
-                Math.round(
+                item["Total"] > 0
+                ? Math.round(
                     (item["Sudah BAP"] /
                     item["Total"]) * 100
-                );
+                )
+                : 0;
 
             return `
 
@@ -444,54 +551,7 @@ function renderRanking(rekap) {
                 </div>
 
             `;
-        }).join('');
-}
-
-// ======================
-// SEARCH
-// ======================
-
-searchInput.addEventListener(
-    "input",
-    filterData
-);
-
-// ======================
-// FILTER
-// ======================
-
-filterJenjang.addEventListener(
-    "change",
-    filterData
-);
-
-function filterData() {
-
-    const keyword =
-        searchInput.value.toLowerCase();
-
-    const jenjang =
-        filterJenjang.value;
-
-    const filtered =
-        allData.filter(item => {
-
-            const matchSearch =
-                item.nama_lembaga
-                    .toLowerCase()
-                    .includes(keyword);
-
-            const matchJenjang =
-                jenjang === "ALL" ||
-                item.jenjang === jenjang;
-
-            return (
-                matchSearch &&
-                matchJenjang
-            );
-        });
-
-    renderTable(filtered);
+        }).join("");
 }
 
 // ======================
@@ -508,27 +568,31 @@ btnTheme.addEventListener(
         const current =
             html.getAttribute("data-theme");
 
-        const target =
+        const next =
             current === "dark"
             ? "light"
             : "dark";
 
         html.setAttribute(
             "data-theme",
-            target
+            next
         );
 
         btnTheme.innerText =
-            target === "dark"
+            next === "dark"
             ? "🌙 Dark Mode"
             : "☀️ Light Mode";
 
-        loadData();
+        // REFRESH CHART COLOR
+        renderCharts(
+            lastRekap,
+            lastSummary
+        );
     }
 );
 
 // ======================
-// PDF EXPORT
+// EXPORT PDF
 // ======================
 
 btnExport.addEventListener(
@@ -561,28 +625,23 @@ btnExport.addEventListener(
                     "a4"
                 );
 
-            const imgProps =
-                pdf.getImageProperties(
-                    imgData
-                );
-
-            const pdfWidth =
+            const width =
                 pdf.internal
                     .pageSize
                     .getWidth();
 
-            const pdfHeight =
-                (imgProps.height *
-                pdfWidth) /
-                imgProps.width;
+            const height =
+                canvas.height *
+                width /
+                canvas.width;
 
             pdf.addImage(
                 imgData,
                 "PNG",
                 0,
                 0,
-                pdfWidth,
-                pdfHeight
+                width,
+                height
             );
 
             pdf.save(
@@ -613,7 +672,7 @@ setInterval(async () => {
 }, 1000);
 
 // ======================
-// TEXT COLOR
+// COLOR
 // ======================
 
 function getTextColor() {
@@ -624,12 +683,18 @@ function getTextColor() {
         === "dark"
 
         ? "#94a3b8"
-
         : "#475569";
 }
 
 // ======================
-// FIRST LOAD
+// CACHE
+// ======================
+
+let lastRekap = [];
+let lastSummary = {};
+
+// ======================
+// INITIAL LOAD
 // ======================
 
 loadData();
