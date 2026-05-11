@@ -49,10 +49,10 @@ const timerEl =
 // ======================
 
 const runningContainer =
-    document.getElementById("runningText");
+    document.getElementById("runningInfo");
 
 const runningTrack =
-    document.getElementById("runningWrapper");
+    document.getElementById("runningTrack");
 
 // ======================
 // POPUP
@@ -107,7 +107,7 @@ function isSudahBap(status) {
 // ======================
 
 async function loadData() {
-    console.log("INFO DATA:", result.info);
+
     try {
 
         const response =
@@ -115,6 +115,7 @@ async function loadData() {
 
         const result =
             await response.json();
+        console.log("INFO DATA:", result.info);
 
         console.log(result);
 
@@ -385,10 +386,26 @@ function buildInfoText(item) {
 }
 
 function renderInfo(data = []) {
+
+    if (!runningContainer ||
+        !runningTrack ||
+        !popupOverlay ||
+        !popupContent) {
+
+        console.error("Element info tidak ditemukan");
+        return;
+    }
+
+    // RESET
     runningContainer.style.display = "none";
+
     runningTrack.innerHTML = "";
 
-    if (!data.length) return;
+    popupContent.innerHTML = "";
+
+    if (!data.length) {
+        return;
+    }
 
     const activeInfo =
         data.filter(item => {
@@ -400,10 +417,11 @@ function renderInfo(data = []) {
             );
         });
 
-    if (!activeInfo.length) return;
+    console.log("ACTIVE INFO:", activeInfo);
 
-    // RESET
-    runningTrack.innerHTML = "";
+    if (!activeInfo.length) {
+        return;
+    }
 
     let popupHTML = "";
 
@@ -426,7 +444,7 @@ function renderInfo(data = []) {
             jenis === "running"
         ) {
 
-            runningInfo.style.display =
+            runningContainer.style.display =
                 "flex";
 
             runningTrack.innerHTML += `
@@ -449,6 +467,26 @@ function renderInfo(data = []) {
             `;
         }
     });
+
+    // ======================
+    // SHOW POPUP
+    // ======================
+
+    if (
+        popupHTML &&
+        !popupAlreadyShown
+    ) {
+
+        popupContent.innerHTML =
+            popupHTML;
+
+        popupOverlay.classList.add(
+            "active"
+        );
+
+        popupAlreadyShown = true;
+    }
+}
 
     // ======================
     // SHOW POPUP ONCE
