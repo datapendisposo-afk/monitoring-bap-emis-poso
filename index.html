@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,233 +11,355 @@
 
     <!-- GOOGLE FONT -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- CHART JS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- CHART -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
 
 <body>
 
-<div class="bg-blob blob1"></div>
-<div class="bg-blob blob2"></div>
+    <!-- BACKGROUND -->
+    <div class="bg-blob blob1"></div>
+    <div class="bg-blob blob2"></div>
 
-<div class="container" id="capture-area">
+    <!-- TOP HEADER -->
+    <div class="top-header reveal">
 
-    <!-- HEADER -->
-    <header class="header">
+        <div class="top-header-left">
 
-        <div>
-            <h1>Dashboard Progres BAP EMIS</h1>
-
-            <p>
-                Monitoring Status Berita Acara Pendataan EMIS Madrasah
-            </p>
-        </div>
-
-        <div class="header-actions">
-
-            <button class="btn" id="btnTheme">
-                🌙 Dark Mode
-            </button>
-
-            <button class="btn primary" id="btnExport">
-                📄 Export PDF
-            </button>
-
-        </div>
-
-    </header>
-
-    <!-- SUMMARY -->
-    <section class="summary-grid">
-
-        <div class="summary-card green">
-            <h3>Sudah BAP</h3>
-            <h2 id="valSudah">0</h2>
-        </div>
-
-        <div class="summary-card red">
-            <h3>Belum BAP</h3>
-            <h2 id="valBelum">0</h2>
-        </div>
-
-        <div class="summary-card blue">
-            <h3>Total Madrasah</h3>
-            <h2 id="valTotal">0</h2>
-        </div>
-
-        <div class="summary-card orange">
-            <h3>Persentase</h3>
-            <h2 id="valPersen">0%</h2>
-        </div>
-
-    </section>
-
-    
-
-    <!-- CHARTS -->
-    <section class="charts-grid">
-
-        <!-- BAR -->
-        <div class="card large">
-
-            <div class="card-title">
-                Grafik Progres per Jenjang
+            <div class="logo-box">
+                📊
             </div>
 
-            <div class="chart-container">
-                <canvas id="barChart"></canvas>
+            <div>
+                <h2>Dashboard Monitoring BAP EMIS</h2>
+
+                <p>
+                    Sistem Monitoring Real-time Pendataan Madrasah
+                </p>
             </div>
 
         </div>
 
-        <!-- PIE -->
-        <div class="card">
+        <div class="top-header-right">
 
-            <div class="card-title">
-                Pie Chart Status
-            </div>
-
-            <div class="chart-container">
-                <canvas id="pieChart"></canvas>
+            <div class="status-live">
+                <span class="live-dot"></span>
+                LIVE DATA
             </div>
 
         </div>
 
-        <!-- DONUT -->
-        <div class="card">
+    </div>
 
-            <div class="card-title">
-                Donut Persentase
+    <!-- MAIN -->
+    <div class="container" id="capture-area">
+
+        <!-- HERO -->
+        <section class="hero-section reveal">
+
+            <div class="hero-content">
+
+                <h1>
+                    Dashboard Progress BAP EMIS
+                </h1>
+
+                <p>
+                    Monitoring progres Berita Acara Pendataan
+                    EMIS Madrasah secara realtime berdasarkan
+                    jenjang pendidikan.
+                </p>
+
+                <div class="hero-badge-group">
+
+                    <span class="hero-badge">
+                        Realtime Monitoring
+                    </span>
+
+                    <span class="hero-badge">
+                        Auto Refresh
+                    </span>
+
+                    <span class="hero-badge">
+                        Export PDF
+                    </span>
+
+                </div>
+
             </div>
 
-            <div class="chart-container">
-                <canvas id="donutChart"></canvas>
+        </section>
+
+        <!-- HEADER -->
+        <header class="header reveal">
+
+            <div>
+
+                <h1>
+                    Dashboard Progres BAP EMIS
+                </h1>
+
+                <p>
+                    Monitoring Status Berita Acara Pendataan EMIS Madrasah
+                </p>
+
             </div>
 
-        </div>
+            <div class="header-actions">
 
-    </section>
+                <button class="btn" id="btnTheme">
+                    🌙 Dark Mode
+                </button>
 
-    <!-- PROGRESS & RANK -->
-    <section class="progress-grid">
+                <button class="btn primary" id="btnExport">
+                    📄 Export PDF
+                </button>
+
+            </div>
+
+        </header>
+
+        <!-- SUMMARY -->
+        <section class="summary-grid reveal">
+
+            <div class="summary-card green reveal-item">
+                <h3>Sudah BAP</h3>
+                <h2 id="valSudah">0</h2>
+            </div>
+
+            <div class="summary-card red reveal-item">
+                <h3>Belum BAP</h3>
+                <h2 id="valBelum">0</h2>
+            </div>
+
+            <div class="summary-card blue reveal-item">
+                <h3>Total Madrasah</h3>
+                <h2 id="valTotal">0</h2>
+            </div>
+
+            <div class="summary-card orange reveal-item">
+                <h3>Persentase</h3>
+                <h2 id="valPersen">0%</h2>
+            </div>
+
+        </section>
+
+        <!-- CHART -->
+        <section class="charts-grid reveal">
+
+            <!-- BAR -->
+            <div class="card large reveal-item">
+
+                <div class="card-title">
+                    Grafik Progres per Jenjang
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="barChart"></canvas>
+                </div>
+
+            </div>
+
+            <!-- PIE -->
+            <div class="card reveal-item">
+
+                <div class="card-title">
+                    Pie Chart Status
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="pieChart"></canvas>
+                </div>
+
+            </div>
+
+            <!-- DONUT -->
+            <div class="card reveal-item">
+
+                <div class="card-title">
+                    Donut Persentase
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="donutChart"></canvas>
+                </div>
+
+            </div>
+
+        </section>
 
         <!-- PROGRESS -->
-        <div class="card">
+        <section class="progress-grid reveal">
+
+            <!-- PROGRESS -->
+            <div class="card reveal-item">
+
+                <div class="card-title">
+                    Persentase per Jenjang
+                </div>
+
+                <div id="progressContainer"></div>
+
+            </div>
+
+            <!-- RANK -->
+            <div class="card reveal-item">
+
+                <div class="card-title">
+                    Ranking Progress
+                </div>
+
+                <div id="rankingContainer"></div>
+
+            </div>
+
+        </section>
+
+        <!-- TOOLBAR -->
+        <section class="toolbar reveal">
+
+            <div class="toolbar-left">
+
+                <input type="text"
+                    id="inpSearch"
+                    placeholder="Cari nama madrasah...">
+
+                <select id="selJenjang">
+
+                    <option value="ALL">
+                        Semua Jenjang
+                    </option>
+
+                    <option value="RA">
+                        RA
+                    </option>
+
+                    <option value="MI">
+                        MI
+                    </option>
+
+                    <option value="MTs">
+                        MTs
+                    </option>
+
+                    <option value="MA">
+                        MA
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="toolbar-right">
+
+                <div class="live-tag">
+
+                    <span class="dot"></span>
+
+                    Auto Refresh:
+
+                    <span id="timer">30</span>s
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- TABLE -->
+        <section class="card table-card reveal">
 
             <div class="card-title">
-                Persentase per Jenjang
+                Detail Data Madrasah
             </div>
 
-            <div id="progressContainer"></div>
+            <div class="table-wrapper">
 
-        </div>
+                <table>
 
-        <!-- RANKING -->
-        <div class="card">
+                    <thead>
 
-            <div class="card-title">
-                Ranking Progress
+                        <tr>
+                            <th>No</th>
+                            <th>Jenjang</th>
+                            <th>Nama Lembaga</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tableBody">
+
+                        <tr>
+
+                            <td colspan="4" class="loading">
+                                Memuat data...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
             </div>
 
-            <div id="rankingContainer"></div>
+        </section>
 
-        </div>
+        <!-- FOOTER -->
+        <footer class="footer reveal">
 
-    </section>
+            Dashboard Progres BAP EMIS •
+            Realtime Monitoring System
 
-    <!-- TOOLBAR -->
-    <section class="toolbar">
+        </footer>
 
-        <div class="toolbar-left">
+    </div>
 
-            <input
-                type="text"
-                id="inpSearch"
-                placeholder="Cari nama madrasah..."
-            >
+    <!-- SCRIPT -->
+    <script src="script.js"></script>
 
-            <select id="selJenjang">
+    <!-- MOTION -->
+    <script>
 
-                <option value="ALL">
-                    Semua Jenjang
-                </option>
+        // SCROLL REVEAL
+        const reveals =
+            document.querySelectorAll(".reveal");
 
-                <option value="RA">RA</option>
-                <option value="MI">MI</option>
-                <option value="MTS">MTs</option>
-                <option value="MA">MA</option>
+        const observer =
+            new IntersectionObserver((entries) => {
 
-            </select>
+                entries.forEach(entry => {
 
-        </div>
+                    if (entry.isIntersecting) {
 
-        <div class="toolbar-right">
+                        entry.target.classList.add("active");
+                    }
+                });
 
-            <div class="live-tag">
-                <span class="dot"></span>
-                Auto Refresh:
-                <span id="timer">30</span>s
-            </div>
+            }, {
+                threshold: 0.15
+            });
 
-        </div>
+        reveals.forEach((el, index) => {
 
-    </section>
-    <!-- TABLE -->
-    <section class="card table-card">
+            el.style.transitionDelay =
+                `${index * 0.12}s`;
 
-        <div class="card-title">
-            Detail Data Madrasah
-        </div>
+            observer.observe(el);
+        });
 
-        <div class="table-wrapper">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-                        <th>No</th>
-                        <th>Jenjang</th>
-                        <th>Nama Lembaga</th>
-                        <th>Status</th>
-                    </tr>
-
-                </thead>
-
-                <tbody id="tableBody">
-
-                    <tr>
-                        <td colspan="4" class="loading">
-                            Memuat data...
-                        </td>
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-
-        Dashboard Progres BAP EMIS • Realtime Monitoring System
-
-    </footer>
-
-</div>
-
-<!-- SCRIPT -->
-<script src="script.js"></script>
+    </script>
 
 </body>
+
 </html>
