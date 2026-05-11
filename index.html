@@ -2,28 +2,16 @@
 <html lang="id" data-theme="dark">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Dashboard Progres BAP EMIS
-    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Progres BAP EMIS</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 
     <!-- GOOGLE FONT -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- CHART JS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -33,11 +21,9 @@
 
     <!-- JSPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 </head>
 
 <body>
-
     <!-- =========================
     BACKGROUND
     ========================= -->
@@ -49,102 +35,43 @@
     POPUP
     ========================= -->
 
-    <div
-        class="popup-overlay"
-        id="popupOverlay"
-    >
-
+    <div class="popup-overlay" id="popupOverlay">
         <div class="popup-box">
-
-            <button
-                type="button"
-                class="popup-close"
-                id="popupClose"
-                aria-label="Tutup Popup"
-            >
-                ✕
-            </button>
-
+            <button type="button" class="popup-close" id="popupClose" aria-label="Tutup Popup">✕</button>
             <div class="popup-header">
-
-                <h2>
-                    📢 Informasi Penting
-                </h2>
-
+                <h2>📢 Informasi Penting</h2>
             </div>
-
-            <div
-                class="popup-content"
-                id="popupContent"
-            ></div>
-
+            <div class="popup-content" id="popupContent"></div>
         </div>
-
     </div>
 
     <!-- =========================
-    MAIN WRAPPER
+    MAIN CONTAINER
     ========================= -->
 
-    <main
-        class="main-wrapper"
-        id="capture-area"
-    >
-
+    <div class="container">
         <!-- =========================
-        HEADER
+        HEADER - MENGGUNAKAN CLASS .header (SESUAI CSS)
         ========================= -->
 
-        <header class="header">
-
+        <div class="header">
             <div class="header-left">
-
-                <h1>
-                    Dashboard Progres BAP EMIS
-                </h1>
-
-                <p>
-                    Monitoring Status Berita Acara Pendataan EMIS Madrasah
-                </p>
-
+                <h1>Dashboard Progres BAP EMIS</h1>
+                <p>Monitoring Status Berita Acara Pendataan EMIS Madrasah</p>
             </div>
-
             <div class="header-actions">
-
-                <button
-                    class="btn"
-                    id="btnTheme"
-                    type="button"
-                >
-                    🌙 Dark Mode
-                </button>
-
-                <button
-                    class="btn primary"
-                    id="btnExport"
-                    type="button"
-                >
-                    📄 Export PDF
-                </button>
-
+                <button class="btn" id="btnTheme" type="button">🌙 Dark Mode</button>
+                <button class="btn primary" id="btnExport" type="button">📄 Export PDF</button>
+                <button class="btn" id="btnInfo" type="button">ℹ️ Info</button>
             </div>
-
-        </header>
+        </div>
 
         <!-- =========================
         RUNNING INFO
         ========================= -->
 
-        <section
-            class="running-info"
-            id="runningInfo"
-        >
-
-            <div
-                class="running-track"
-                id="runningTrack"
-            ></div>
-
+        <section class="running-info" id="runningInfo">
+            <div class="running-track" id="runningTrack"></div>
         </section>
 
         <!-- =========================
@@ -152,47 +79,25 @@
         ========================= -->
 
         <section class="summary-grid">
-
             <div class="summary-card green">
-
                 <h3>Sudah BAP</h3>
-
-                <h2 id="valSudah">
-                    0
-                </h2>
-
+                <h2 id="valSudah">0</h2>
             </div>
 
             <div class="summary-card red">
-
                 <h3>Belum BAP</h3>
-
-                <h2 id="valBelum">
-                    0
-                </h2>
-
+                <h2 id="valBelum">0</h2>
             </div>
 
             <div class="summary-card blue">
-
                 <h3>Total Madrasah</h3>
-
-                <h2 id="valTotal">
-                    0
-                </h2>
-
+                <h2 id="valTotal">0</h2>
             </div>
 
             <div class="summary-card orange">
-
                 <h3>Persentase</h3>
-
-                <h2 id="valPersen">
-                    0%
-                </h2>
-
+                <h2 id="valPersen">0%</h2>
             </div>
-
         </section>
 
         <!-- =========================
@@ -200,43 +105,26 @@
         ========================= -->
 
         <section class="charts-grid">
-
             <div class="card large">
-
-                <div class="card-title">
-                    Grafik Progres per Jenjang
-                </div>
-
+                <div class="card-title">Grafik Progres per Jenjang</div>
                 <div class="chart-container">
                     <canvas id="barChart"></canvas>
                 </div>
-
             </div>
 
             <div class="card">
-
-                <div class="card-title">
-                    Pie Chart Status
-                </div>
-
+                <div class="card-title">Pie Chart Status</div>
                 <div class="chart-container">
                     <canvas id="pieChart"></canvas>
                 </div>
-
             </div>
 
             <div class="card">
-
-                <div class="card-title">
-                    Donut Persentase
-                </div>
-
+                <div class="card-title">Donut Persentase</div>
                 <div class="chart-container">
                     <canvas id="donutChart"></canvas>
                 </div>
-
             </div>
-
         </section>
 
         <!-- =========================
@@ -244,27 +132,15 @@
         ========================= -->
 
         <section class="progress-grid">
-
             <div class="card">
-
-                <div class="card-title">
-                    Persentase per Jenjang
-                </div>
-
+                <div class="card-title">Persentase per Jenjang</div>
                 <div id="progressContainer"></div>
-
             </div>
 
             <div class="card">
-
-                <div class="card-title">
-                    Ranking Progress
-                </div>
-
+                <div class="card-title">Ranking Progress</div>
                 <div id="rankingContainer"></div>
-
             </div>
-
         </section>
 
         <!-- =========================
@@ -272,64 +148,29 @@
         ========================= -->
 
         <section class="toolbar">
-
             <div class="toolbar-left">
-
-                <input
-                    type="text"
-                    id="inpSearch"
-                    placeholder="Cari nama madrasah..."
-                >
-
+                <input type="text" id="inpSearch" placeholder="Cari nama madrasah...">
                 <select id="selJenjang">
-
-                    <option value="ALL">
-                        Semua Jenjang
-                    </option>
-
+                    <option value="ALL">Semua Jenjang</option>
                     <option value="RA">RA</option>
                     <option value="MI">MI</option>
                     <option value="MTS">MTs</option>
                     <option value="MA">MA</option>
-
                 </select>
-
                 <select id="selStatusBap">
-
-                    <option value="ALL">
-                        Semua Status
-                    </option>
-
-                    <option value="SUDAH">
-                        Sudah BAP
-                    </option>
-
-                    <option value="BELUM">
-                        Belum BAP
-                    </option>
-
+                    <option value="ALL">Semua Status</option>
+                    <option value="SUDAH">Sudah BAP</option>
+                    <option value="BELUM">Belum BAP</option>
                 </select>
-
             </div>
 
             <div class="toolbar-right">
-
                 <div class="live-tag">
-
                     <span class="dot"></span>
-
-                    <span>
-                        Auto Refresh:
-                    </span>
-
-                    <strong id="timer">
-                        30
-                    </strong>s
-
+                    <span>Auto Refresh:</span>
+                    <strong id="timer">30</strong>s
                 </div>
-
             </div>
-
         </section>
 
         <!-- =========================
@@ -337,47 +178,24 @@
         ========================= -->
 
         <section class="card table-card">
-
-            <div class="card-title">
-                Detail Data Madrasah
-            </div>
-
+            <div class="card-title">Detail Data Madrasah</div>
             <div class="table-wrapper">
-
                 <table>
-
                     <thead>
-
                         <tr>
-
                             <th>No</th>
                             <th>Jenjang</th>
                             <th>Nama Lembaga</th>
                             <th>Status</th>
-
                         </tr>
-
                     </thead>
-
                     <tbody id="tableBody">
-
                         <tr>
-
-                            <td
-                                colspan="4"
-                                class="loading"
-                            >
-                                Memuat data...
-                            </td>
-
+                            <td colspan="4" class="loading">Memuat data...</td>
                         </tr>
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </section>
 
         <!-- =========================
@@ -385,45 +203,22 @@
         ========================= -->
 
         <footer class="footer">
-
             <div class="footer-content">
-
                 <div class="footer-left">
-
-                    <h3>
-                        Dashboard Progres BAP EMIS
-                    </h3>
-
-                    <p>
-                        Monitoring System Pendataan EMIS Madrasah
-                    </p>
-
+                    <h3>Dashboard Progres BAP EMIS</h3>
+                    <p>Monitoring System Pendataan EMIS Madrasah</p>
                 </div>
-
                 <div class="footer-center">
-
                     <div class="footer-badge">
-
                         <span class="footer-dot"></span>
-
                         2026 © Powered by TIM IT Pendis Kemenag Poso
-
                     </div>
-
                 </div>
-
             </div>
-
         </footer>
-
-    </main>
-
-    <!-- =========================
-    SCRIPT
-    ========================= -->
+    </div>
 
     <script src="script.js"></script>
-
 </body>
 
 </html>
