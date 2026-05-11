@@ -32,6 +32,9 @@ const searchInput =
 const filterJenjang =
     document.getElementById("selJenjang");
 
+const filterStatusBap =
+    document.getElementById("selStatusBap"); // FIX INI WAJIB
+
 const btnTheme =
     document.getElementById("btnTheme");
 
