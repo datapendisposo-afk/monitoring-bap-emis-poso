@@ -783,4 +783,164 @@ tbody tr:hover{
         padding:10px 14px;
         font-size:13px;
     }
+
+    /* ======================
+       FOOTER
+    ====================== */
+    
+    .footer{
+    
+        margin-top:50px;
+    
+        background:var(--card);
+    
+        border:1px solid var(--border);
+    
+        backdrop-filter:blur(14px);
+    
+        border-radius:28px;
+    
+        padding:24px 30px;
+    
+        overflow:hidden;
+    
+        position:relative;
+    }
+    
+    .footer::before{
+    
+        content:'';
+    
+        position:absolute;
+    
+        top:0;
+        left:0;
+    
+        width:100%;
+        height:3px;
+    
+        background:linear-gradient(
+            90deg,
+            #3b82f6,
+            #8b5cf6,
+            #06b6d4
+        );
+    }
+    
+    .footer-content{
+    
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:25px;
+        flex-wrap:wrap;
+    }
+    
+    .footer-left h3{
+    
+        font-size:18px;
+        font-weight:600;
+    
+        margin-bottom:6px;
+    }
+    
+    .footer-left p{
+    
+        color:var(--muted);
+        font-size:14px;
+    }
+    
+    .footer-center{
+    
+        display:flex;
+        align-items:center;
+        justify-content:center;
+    }
+    
+    .footer-badge{
+    
+        display:flex;
+        align-items:center;
+        gap:10px;
+    
+        padding:10px 18px;
+    
+        border-radius:30px;
+    
+        background:rgba(34,197,94,0.12);
+    
+        border:1px solid rgba(34,197,94,0.25);
+    
+        color:#4ade80;
+    
+        font-size:14px;
+        font-weight:500;
+    }
+    
+    .footer-dot{
+    
+        width:10px;
+        height:10px;
+    
+        border-radius:50%;
+    
+        background:#22c55e;
+    
+        animation:footerPulse 1.5s infinite;
+    }
+    
+    @keyframes footerPulse{
+    
+        0%{
+            transform:scale(1);
+            opacity:1;
+        }
+    
+        100%{
+            transform:scale(2.2);
+            opacity:0;
+        }
+    }
+    
+    .footer-right{
+    
+        text-align:right;
+    }
+    
+    .footer-right p{
+    
+        font-size:14px;
+        font-weight:600;
+    
+        margin-bottom:4px;
+    }
+    
+    .footer-right span{
+    
+        color:var(--muted);
+        font-size:13px;
+    }
+    
+    /* ======================
+       RESPONSIVE
+    ====================== */
+    
+    @media(max-width:768px){
+    
+        .footer-content{
+    
+            flex-direction:column;
+            align-items:flex-start;
+        }
+    
+        .footer-right{
+    
+            text-align:left;
+        }
+    
+        .footer{
+    
+            padding:22px;
+        }
+    }
 }
