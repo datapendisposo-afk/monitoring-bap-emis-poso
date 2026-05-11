@@ -54,6 +54,8 @@ let charts = {};
 
 let countdown = 30;
 
+let infoData = [];
+
 let lastRekap = [];
 
 let lastSummary = {};
