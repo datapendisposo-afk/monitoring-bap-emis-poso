@@ -92,7 +92,7 @@ body{
 
     position:fixed;
 
-    top:0;
+    top:42px;
     left:0;
 
     width:100%;
@@ -102,19 +102,17 @@ body{
     display:flex;
     justify-content:space-between;
     align-items:center;
+
     gap:20px;
     flex-wrap:wrap;
 
-    padding:22px 28px;
+    padding:20px 28px;
 
-    background:rgba(2,6,23,0.96);
+    background:rgba(2,6,23,0.92);
+
+    backdrop-filter:blur(14px);
 
     border-bottom:1px solid rgba(255,255,255,0.06);
-
-    transform:translateZ(0);
-    will-change:transform;
-
-    backface-visibility:hidden;
 
     transition:
         background 0.25s ease,
