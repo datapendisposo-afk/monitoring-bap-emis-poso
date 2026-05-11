@@ -34,7 +34,7 @@ html{
 
 body{
 
-    padding-top:115px;
+    padding-top:135px;
 
     background:var(--bg);
     color:var(--text);
@@ -99,27 +99,28 @@ body{
 
     position:fixed;
 
-    top:42px;
+    top:0;
     left:0;
 
     width:100%;
+
+    height:90px;
 
     z-index:9999;
 
     display:flex;
     justify-content:space-between;
     align-items:center;
-
     gap:20px;
     flex-wrap:wrap;
 
     padding:18px 28px;
 
-    background:rgba(2,6,23,0.92);
-
-    backdrop-filter:blur(14px);
+    background:rgba(2,6,23,0.96);
 
     border-bottom:1px solid rgba(255,255,255,0.06);
+
+    backdrop-filter:blur(14px);
 
     transition:
         background 0.25s ease,
@@ -779,23 +780,26 @@ tbody tr:hover{
 }
 
 /* ======================
-   RUNNING INFO
+   RUNNING TEXT
 ====================== */
 
-.running-info{
+.running-text{
 
     position:fixed;
 
-    top:0;
+    top:90px;
     left:0;
 
     width:100%;
 
     height:42px;
 
-    z-index:10000;
+    z-index:9998;
 
     overflow:hidden;
+
+    display:none;
+    align-items:center;
 
     background:linear-gradient(
         90deg,
@@ -803,11 +807,10 @@ tbody tr:hover{
         #1d4ed8
     );
 
-    display:flex;
-    align-items:center;
+    border-bottom:1px solid rgba(255,255,255,0.08);
 }
 
-.running-track{
+.running-wrapper{
 
     display:inline-block;
 
@@ -825,15 +828,14 @@ tbody tr:hover{
 
 @keyframes runningText{
 
-    from{
+    0%{
         transform:translateX(0);
     }
 
-    to{
-        transform:translateX(-120%);
+    100%{
+        transform:translateX(-100%);
     }
 }
-
 /* ======================
    HEADER
 ====================== */
@@ -853,26 +855,23 @@ tbody tr:hover{
 
     inset:0;
 
-    width:100%;
-    height:100%;
+    z-index:20000;
 
     display:none;
 
     align-items:center;
     justify-content:center;
 
+    padding:20px;
+
     background:rgba(0,0,0,0.65);
 
     backdrop-filter:blur(8px);
-
-    z-index:999999;
-
-    padding:20px;
 }
 
 .popup-overlay.active{
 
-    display:flex !important;
+    display:flex;
 }
 
 .popup-box{
@@ -889,6 +888,8 @@ tbody tr:hover{
     padding:28px;
 
     position:relative;
+
+    z-index:20001;
 
     animation:popupShow 0.35s ease;
 }
