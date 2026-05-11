@@ -107,7 +107,7 @@ function isSudahBap(status) {
 // ======================
 
 async function loadData() {
-
+    console.log("INFO DATA:", result.info);
     try {
 
         const response =
