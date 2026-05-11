@@ -164,23 +164,25 @@
             font-weight: 700;
         }
 
-        /* Table Control Toolbar (Now integrated in Table Card) */
-        .table-toolbar {
+        /* Toolbar */
+        .toolbar {
             display: flex;
             justify-content: space-between;
+            background: var(--card);
+            padding: 1rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
             align-items: center;
-            padding: 1rem 0;
-            gap: 1rem;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 1rem;
             flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .search-box {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
             flex: 1;
-            min-width: 300px;
+            max-width: 400px;
         }
 
         input, select {
@@ -191,12 +193,6 @@
             color: var(--text);
             outline: none;
             width: 100%;
-            transition: 0.3s;
-        }
-
-        input:focus, select:focus {
-            border-color: var(--blue);
-            background: rgba(255, 255, 255, 0.1);
         }
 
         .live-tag {
@@ -206,9 +202,6 @@
             font-size: 0.8rem;
             color: var(--green);
             font-weight: 500;
-            padding: 0.5rem 1rem;
-            background: rgba(34, 197, 94, 0.1);
-            border-radius: 20px;
         }
 
         .dot {
@@ -308,17 +301,12 @@
             font-weight: 500;
             border-bottom: 1px solid var(--border);
             font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.02);
         }
 
         td {
             padding: 1rem;
             border-bottom: 1px solid var(--border);
             font-size: 0.95rem;
-        }
-
-        tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
         }
 
         .badge {
@@ -340,8 +328,6 @@
             .container { padding: 1rem; }
             .header h1 { font-size: 1.5rem; }
             .stats-grid { grid-template-columns: 1fr 1fr; }
-            .search-box { min-width: 100%; }
-            .table-toolbar { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -385,6 +371,24 @@
             </div>
         </section>
 
+        <!-- TOOLBAR -->
+        <section class="toolbar">
+            <div class="search-box">
+                <input type="text" id="inpSearch" placeholder="Cari nama madrasah...">
+                <select id="selJenjang" style="width: 150px;">
+                    <option value="ALL">Semua Jenjang</option>
+                    <option value="RA">RA</option>
+                    <option value="MI">MI</option>
+                    <option value="MTs">MTs</option>
+                    <option value="MA">MA</option>
+                </select>
+            </div>
+            <div class="live-tag">
+                <div class="dot"></div>
+                Auto Refresh: <span id="timer">30</span>s
+            </div>
+        </section>
+
         <!-- CHARTS & PROGRESS -->
         <div class="main-grid">
             <div class="card">
@@ -401,30 +405,9 @@
             </div>
         </div>
 
-        <!-- TABLE SECTION WITH INTEGRATED FILTER -->
+        <!-- TABLE -->
         <section class="card table-card">
-            <div class="card-title">
-                Data Detail Lembaga
-                <div class="live-tag">
-                    <div class="dot"></div>
-                    Refresh: <span id="timer">30</span>s
-                </div>
-            </div>
-
-            <!-- TOOLBAR PINDAH DISINI -->
-            <div class="table-toolbar">
-                <div class="search-box">
-                    <input type="text" id="inpSearch" placeholder="Cari nama madrasah...">
-                    <select id="selJenjang" style="max-width: 180px;">
-                        <option value="ALL">Semua Jenjang</option>
-                        <option value="RA">Jenjang RA</option>
-                        <option value="MI">Jenjang MI</option>
-                        <option value="MTs">Jenjang MTs</option>
-                        <option value="MA">Jenjang MA</option>
-                    </select>
-                </div>
-            </div>
-
+            <div class="card-title">Data Detail Lembaga</div>
             <div class="table-scroll">
                 <table>
                     <thead>
@@ -478,8 +461,8 @@
             const totalPersen = Math.round((result.summary.sudah_bap / result.summary.total_madrasah) * 100);
             document.getElementById('valPersen').innerText = totalPersen + '%';
 
-            // Filter context table
-            filterData();
+            // Table
+            renderTable(allData);
 
             // Chart
             renderChart(result.rekap);
@@ -490,10 +473,6 @@
 
         function renderTable(data) {
             const tbody = document.getElementById('tableBody');
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color: var(--muted); padding: 2rem;">Data tidak ditemukan</td></tr>`;
-                return;
-            }
             tbody.innerHTML = data.map(item => `
                 <tr>
                     <td>${item.no}</td>
@@ -563,7 +542,7 @@
 
         // Timer
         function startTimer() {
-            const timerInterval = setInterval(() => {
+            setInterval(() => {
                 countdown--;
                 if (countdown <= 0) {
                     countdown = 30;
@@ -596,10 +575,7 @@
             const target = current === 'dark' ? 'light' : 'dark';
             html.setAttribute('data-theme', target);
             document.getElementById('btnTheme').innerText = target === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
-            if(allData.length > 0) {
-                renderChart(allData); // Re-render for color update
-                fetchData();
-            }
+            if(allData.length > 0) fetchData(); // Refresh chart colors
         });
 
         // PDF Export
@@ -607,7 +583,7 @@
             const element = document.getElementById('capture-area');
             const { jsPDF } = window.jspdf;
             
-            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+            html2canvas(element, { scale: 2 }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 const imgProps = pdf.getImageProperties(imgData);
