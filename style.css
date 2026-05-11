@@ -417,4 +417,30 @@ table td{
         width:100%;
         flex-direction:column;
     }
+    /* Tambahkan di style.css */
+    .progress-fill {
+        transition: width 1s ease-in-out;
+        background: linear-gradient(90deg, var(--blue), var(--green));
+    }
+    
+    .chart-container {
+        min-height: 300px;
+    }
+    
+    /* Hover effect untuk baris tabel */
+    table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.03);
+    }
+    
+    /* Scrollbar kustom untuk Dark Mode */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--card);
+        border-radius: 10px;
+    }
 }
