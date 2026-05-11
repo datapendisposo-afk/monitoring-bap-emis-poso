@@ -32,9 +32,6 @@ const searchInput =
 const filterJenjang =
     document.getElementById("selJenjang");
 
-const filterStatusBap =
-    document.getElementById("selStatusBap"); // FIX INI WAJIB
-
 const btnTheme =
     document.getElementById("btnTheme");
 
@@ -49,11 +46,10 @@ const timerEl =
 // ======================
 
 let allData = [];
-let charts = {};
-let countdown = 30;
 
-let lastRekap = [];
-let lastSummary = {};
+let charts = {};
+
+let countdown = 30;
 
 // ======================
 // LOAD DATA
@@ -69,25 +65,46 @@ async function loadData() {
         const result =
             await response.json();
 
-        if (!result.status) return;
+        console.log(result);
 
+        if (!result.status) {
+
+            console.error(
+                "Response status false"
+            );
+
+            return;
+        }
+
+        // UPDATE GLOBAL DATA
         allData = result.data || [];
 
-        lastRekap = result.rekap || [];
-        lastSummary = result.summary || {};
-
+        // UPDATE SUMMARY
         renderSummary(result.summary);
-        renderCharts(result.rekap, result.summary);
+
+        // UPDATE CHARTS
+        renderCharts(
+            result.rekap,
+            result.summary
+        );
+
+        // UPDATE PROGRESS
         renderProgress(result.rekap);
+
+        // UPDATE RANKING
         renderRanking(result.rekap);
 
+        // PENTING:
+        // JANGAN renderTable(allData)
+        // HARUS filterData()
         filterData();
 
-        // RESET TIMER
-        countdown = 30;
-        timerEl.innerText = countdown;
-
     } catch (error) {
+
+        console.error(
+            "Fetch Error:",
+            error
+        );
 
         tableBody.innerHTML = `
             <tr>
@@ -192,26 +209,25 @@ function renderTable(data) {
 function filterData() {
 
     const keyword =
-        searchInput.value.toLowerCase().trim();
+        searchInput.value
+            .toLowerCase()
+            .trim();
 
     const jenjang =
         filterJenjang.value;
-
-    const statusBap =
-        filterStatusBap.value;
 
     const filtered =
         allData.filter(item => {
 
             const nama =
-                String(item.nama_lembaga || "")
-                    .toLowerCase();
+                String(
+                    item.nama_lembaga || ""
+                ).toLowerCase();
 
             const itemJenjang =
-                String(item.jenjang || "");
-
-            const itemStatus =
-                Number(item.status_bap);
+                String(
+                    item.jenjang || ""
+                ).trim();
 
             const matchSearch =
                 nama.includes(keyword);
@@ -220,15 +236,9 @@ function filterData() {
                 jenjang === "ALL" ||
                 itemJenjang === jenjang;
 
-            const matchStatus =
-                statusBap === "ALL" ||
-                (statusBap === "SUDAH" && itemStatus === 1) ||
-                (statusBap === "BELUM" && itemStatus === 0);
-
             return (
                 matchSearch &&
-                matchJenjang &&
-                matchStatus
+                matchJenjang
             );
         });
 
@@ -239,20 +249,16 @@ function filterData() {
 // SEARCH EVENT
 // ======================
 
-searchInput.addEventListener("input", filterData);
-filterJenjang.addEventListener("change", filterData);
-filterStatusBap.addEventListener("change", filterData);
+searchInput.addEventListener(
+    "input",
+    filterData
+);
 
 // ======================
 // FILTER EVENT
 // ======================
 
 filterJenjang.addEventListener(
-    "change",
-    filterData
-);
-
-filterStatusBap.addEventListener(
     "change",
     filterData
 );
@@ -552,25 +558,39 @@ function renderRanking(rekap) {
 // THEME
 // ======================
 
-btnTheme.addEventListener("click", () => {
+btnTheme.addEventListener(
+    "click",
+    () => {
 
-    const html = document.documentElement;
+        const html =
+            document.documentElement;
 
-    const current =
-        html.getAttribute("data-theme");
+        const current =
+            html.getAttribute("data-theme");
 
-    const next =
-        current === "dark" ? "light" : "dark";
+        const next =
+            current === "dark"
+            ? "light"
+            : "dark";
 
-    html.setAttribute("data-theme", next);
+        html.setAttribute(
+            "data-theme",
+            next
+        );
 
-    btnTheme.innerText =
-        next === "dark"
-        ? "🌙 Dark Mode"
-        : "☀️ Light Mode";
+        btnTheme.innerText =
+            next === "dark"
+            ? "🌙 Dark Mode"
+            : "☀️ Light Mode";
 
-    renderCharts(lastRekap, lastSummary);
-});
+        // REFRESH CHART COLOR
+        renderCharts(
+            lastRekap,
+            lastSummary
+        );
+    }
+);
+
 // ======================
 // EXPORT PDF
 // ======================
@@ -639,7 +659,8 @@ setInterval(async () => {
 
     countdown--;
 
-    timerEl.innerText = countdown;
+    timerEl.innerText =
+        countdown;
 
     if (countdown <= 0) {
 
@@ -702,65 +723,3 @@ revealElements.forEach((el) => {
 window.addEventListener("load", () => {
     document.body.style.opacity = "1";
 });
-
-const header = document.querySelector(".header");
-
-if (header) {
-
-    window.addEventListener("scroll", () => {
-
-        if (window.scrollY > 10) {
-            header.classList.add("scrolled");
-        } else {
-            header.classList.remove("scrolled");
-        }
-
-    });
-}
-function animateNumber(el, target, duration = 800) {
-
-    let start = 0;
-    let startTime = null;
-
-    function animate(currentTime) {
-
-        if (!startTime) startTime = currentTime;
-
-        const progress =
-            Math.min((currentTime - startTime) / duration, 1);
-
-        const value =
-            Math.floor(progress * (target - start) + start);
-
-        el.innerText = value;
-
-        if (progress < 1) {
-            requestAnimationFrame(animate);
-        }
-    }
-
-    requestAnimationFrame(animate);
-}
-
-function renderSummary(summary) {
-
-    const total =
-        Number(summary.total_madrasah || 0);
-
-    const sudah =
-        Number(summary.sudah_bap || 0);
-
-    const belum =
-        Number(summary.belum_bap || 0);
-
-    const persen =
-        total > 0
-        ? Math.round((sudah / total) * 100)
-        : 0;
-
-    animateNumber(valSudah, sudah);
-    animateNumber(valBelum, belum);
-    animateNumber(valTotal, total);
-
-    valPersen.innerText = persen + "%";
-}
