@@ -182,42 +182,46 @@ function renderTable(data) {
     }
 
     tableBody.innerHTML =
-        data.map(item => `
+        data.map(item => {
 
-            <tr>
+            return `
 
-                <td>${item.no || "-"}</td>
+                <tr>
 
-                <td>
-                    <span class="badge badge-jenjang">
-                        ${item.jenjang || "-"}
-                    </span>
-                </td>
+                    <td>${item.no || "-"}</td>
 
-                <td>
-                    ${item.nama_lembaga || "-"}
-                </td>
+                    <td>
+                        <span class="badge badge-jenjang">
+                            ${item.jenjang || "-"}
+                        </span>
+                    </td>
 
-                <td>
+                    <td>
+                        ${item.nama_lembaga || "-"}
+                    </td>
 
-                    <span class="
-                        badge
-                        ${isSudahBap(item.status_bap)
-                            ? "badge-success"
-                            : "badge-danger"}
-                    ">
-                
-                        ${isSudahBap(item.status_bap)
-                            ? "Sudah BAP"
-                            : "Belum BAP"}
-                
-                    </span>
-                
-                </td>
+                    <td>
 
-            </tr>
+                        <span class="
+                            badge
+                            ${isSudahBap(item.status_bap)
+                                ? "badge-success"
+                                : "badge-danger"}
+                        ">
 
-        `).join("");
+                            ${isSudahBap(item.status_bap)
+                                ? "Sudah BAP"
+                                : "Belum BAP"}
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
 }
 
 // ======================
