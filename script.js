@@ -1,4 +1,4 @@
-const API_URL = "URL_APPS_SCRIPT_ANDA";
+const API_URL = "https://script.google.com/macros/s/AKfycbxauRyQz6eSVPdh0NJKhRp64V7vYufiLoc8PdPoEblgwdXP-1usfzJLPZQ8HDJ54HEc/exec";
 
 fetch(API_URL)
   .then(response => response.json())
