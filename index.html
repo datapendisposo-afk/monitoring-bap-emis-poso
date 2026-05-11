@@ -1,64 +1,245 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
     <title>Dashboard Progres BAP EMIS</title>
 
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 
+    <!-- FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CHART -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <!-- PDF EXPORT -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
+
 <body>
 
-    <div class="container">
+<div class="background-blur"></div>
 
-        <header>
+<div class="container" id="dashboard">
+
+    <!-- HEADER -->
+    <header class="header">
+
+        <div>
             <h1>Dashboard Progres BAP EMIS</h1>
-            <p>Monitoring status BAP Madrasah per Jenjang</p>
-        </header>
 
-        <div class="summary-cards">
-            <div class="card success">
-                <h2 id="totalBap">0</h2>
+            <p>
+                Monitoring Status Berita Acara Pendataan EMIS Madrasah
+            </p>
+        </div>
+
+        <div class="header-actions">
+
+            <button id="themeToggle" class="btn-action">
+                🌙 Dark Mode
+            </button>
+
+            <button id="exportPDF" class="btn-action">
+                📄 Export PDF
+            </button>
+
+        </div>
+
+    </header>
+
+    <!-- SUMMARY -->
+    <section class="summary-grid">
+
+        <div class="summary-card green">
+            <div>
+                <h2 id="sudahBap">0</h2>
                 <span>Sudah BAP</span>
             </div>
 
-            <div class="card danger">
-                <h2 id="totalBelum">0</h2>
+            <div class="summary-icon">
+                ✔
+            </div>
+        </div>
+
+        <div class="summary-card red">
+            <div>
+                <h2 id="belumBap">0</h2>
                 <span>Belum BAP</span>
             </div>
 
-            <div class="card info">
-                <h2 id="totalLembaga">0</h2>
-                <span>Total Lembaga</span>
+            <div class="summary-icon">
+                ✖
             </div>
         </div>
 
-        <div class="chart-box">
-            <h3>Grafik Progres BAP per Jenjang</h3>
-            <canvas id="chartJenjang"></canvas>
+        <div class="summary-card blue">
+            <div>
+                <h2 id="totalMadrasah">0</h2>
+                <span>Total Madrasah</span>
+            </div>
+
+            <div class="summary-icon">
+                🏫
+            </div>
         </div>
 
-        <div class="table-section">
-            <h3>Detail Data Madrasah</h3>
+        <div class="summary-card orange">
+            <div>
+                <h2 id="persenTotal">0%</h2>
+                <span>Persentase BAP</span>
+            </div>
+
+            <div class="summary-icon">
+                📊
+            </div>
+        </div>
+
+    </section>
+
+    <!-- FILTER -->
+    <section class="toolbar">
+
+        <div class="toolbar-left">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Cari nama madrasah..."
+            >
+
+            <select id="filterJenjang">
+
+                <option value="ALL">
+                    Semua Jenjang
+                </option>
+
+                <option value="RA">RA</option>
+                <option value="MI">MI</option>
+                <option value="MTs">MTs</option>
+                <option value="MA">MA</option>
+
+            </select>
+
+        </div>
+
+        <div class="toolbar-right">
+
+            <div class="live-indicator">
+                <span></span>
+                Auto Refresh 30 Detik
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- CHARTS -->
+    <section class="charts-grid">
+
+        <!-- BAR -->
+        <div class="chart-card large">
+
+            <div class="card-header">
+                <h3>Grafik Progres per Jenjang</h3>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="chartJenjang"></canvas>
+            </div>
+
+        </div>
+
+        <!-- PIE -->
+        <div class="chart-card">
+
+            <div class="card-header">
+                <h3>Pie Chart BAP</h3>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="pieChart"></canvas>
+            </div>
+
+        </div>
+
+        <!-- DONUT -->
+        <div class="chart-card">
+
+            <div class="card-header">
+                <h3>Donut Persentase</h3>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="donutChart"></canvas>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- PERSENTASE -->
+    <section class="progress-section">
+
+        <div class="progress-card">
+
+            <h3>Persentase per Jenjang</h3>
+
+            <div id="progressContainer"></div>
+
+        </div>
+
+        <!-- RANKING -->
+        <div class="ranking-card">
+
+            <h3>Ranking Progress</h3>
+
+            <div id="rankingContainer"></div>
+
+        </div>
+
+    </section>
+
+    <!-- TABLE -->
+    <section class="table-card">
+
+        <div class="card-header">
+            <h3>Data Madrasah</h3>
+        </div>
+
+        <div class="table-wrapper">
 
             <table>
+
                 <thead>
+
                     <tr>
                         <th>No</th>
                         <th>Jenjang</th>
                         <th>Nama Lembaga</th>
                         <th>Status</th>
                     </tr>
+
                 </thead>
+
                 <tbody id="tableBody"></tbody>
+
             </table>
+
         </div>
 
-    </div>
+    </section>
 
-    <script src="script.js"></script>
+</div>
+
+<!-- SCRIPT -->
+<script src="script.js"></script>
+
 </body>
 </html>
