@@ -49,10 +49,11 @@ const timerEl =
 // ======================
 
 let allData = [];
-
 let charts = {};
-
 let countdown = 30;
+
+let lastRekap = [];
+let lastSummary = {};
 
 // ======================
 // LOAD DATA
@@ -753,3 +754,28 @@ window.addEventListener("scroll", () => {
     }
 
 });
+
+function animateNumber(el, target, duration = 800) {
+
+    let start = 0;
+    let startTime = null;
+
+    function animate(currentTime) {
+
+        if (!startTime) startTime = currentTime;
+
+        const progress =
+            Math.min((currentTime - startTime) / duration, 1);
+
+        const value =
+            Math.floor(progress * (target - start) + start);
+
+        el.innerText = value;
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
