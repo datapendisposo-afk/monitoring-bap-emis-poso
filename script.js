@@ -65,17 +65,22 @@ async function loadData() {
 
         allData = result.data;
 
+        // SUMMARY
         renderSummary(result.summary);
 
-        renderTable(allData);
+        // TABLE FILTERED
+        filterData();
 
+        // CHART
         renderCharts(
             result.rekap,
             result.summary
         );
 
+        // PROGRESS
         renderProgress(result.rekap);
 
+        // RANKING
         renderRanking(result.rekap);
 
     } catch (error) {
