@@ -1116,4 +1116,86 @@ RESPONSIVE
 
         font-size:13px;
     }
+    /* ======================
+    FINAL OVERFLOW FIX
+    ====================== */
+    
+    html,
+    body{
+        width:100%;
+        max-width:100%;
+        overflow-x:hidden;
+    }
+    
+    /* CONTAINER */
+    
+    .container{
+        width:100%;
+        max-width:1400px;
+        overflow:hidden;
+    }
+    
+    /* FLEX FIX */
+    
+    .header,
+    .toolbar,
+    .toolbar-left,
+    .header-actions,
+    .rank-left,
+    .footer-content{
+        min-width:0;
+    }
+    
+    /* GRID FIX */
+    
+    .charts-grid,
+    .progress-grid,
+    .summary-grid{
+        width:100%;
+    }
+    
+    /* CHART FIX */
+    
+    .chart-container{
+        width:100%;
+        overflow:hidden;
+    }
+    
+    canvas{
+        max-width:100% !important;
+    }
+    
+    /* TABLE FIX */
+    
+    .table-wrapper{
+        width:100%;
+        overflow-x:auto;
+    }
+    
+    /* RUNNING TEXT FIX */
+    
+    .running-info{
+        width:100%;
+        overflow:hidden;
+    }
+    
+    .running-track{
+        display:flex;
+        width:max-content;
+    }
+    
+    /* INPUT FIX */
+    
+    input,
+    select{
+        max-width:100%;
+    }
+    
+    /* CARD FIX */
+    
+    .card,
+    .summary-card,
+    .footer{
+        max-width:100%;
+    }
 }
