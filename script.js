@@ -698,28 +698,3 @@ let lastSummary = {};
 // ======================
 
 loadData();
-
-const revealElements = document.querySelectorAll(
-    ".summary-card, .card, .charts-grid, .progress-grid, .table-card, .toolbar"
-);
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-            setTimeout(() => {
-                entry.target.classList.add("active");
-            }, index * 80); // efek berurutan
-        }
-    });
-}, {
-    threshold: 0.15
-});
-
-revealElements.forEach((el) => {
-    el.classList.add("reveal");
-    observer.observe(el);
-});
-
-window.addEventListener("load", () => {
-    document.body.style.opacity = "1";
-});
