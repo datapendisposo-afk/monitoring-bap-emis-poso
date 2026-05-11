@@ -81,6 +81,7 @@ CONTAINER
 ====================== */
 
 .container{
+    overflow:visible;
     width:100%;
     max-width:1400px;
 
