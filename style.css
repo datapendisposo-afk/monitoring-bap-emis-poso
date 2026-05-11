@@ -836,6 +836,16 @@ tbody tr:hover{
         transform:translateX(-100%);
     }
 }
+
+.running-item{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    margin-right:120px;
+}
+
 /* ======================
    HEADER
 ====================== */
