@@ -3,239 +3,623 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
     <title>Dashboard Progres BAP EMIS</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
-
-    <!-- FONT -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- CHART -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- PDF EXPORT -->
+    
+    <!-- PDF Export Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-</head>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: rgba(30, 41, 59, 0.7);
+            --text: #ffffff;
+            --muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --green: #22c55e;
+            --red: #ef4444;
+            --blue: #3b82f6;
+            --orange: #f59e0b;
+            --accent: #6366f1;
+        }
 
+        [data-theme="light"] {
+            --bg: #f8fafc;
+            --card: rgba(255, 255, 255, 0.9);
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: rgba(15, 23, 42, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Decorative Background */
+        .bg-blob {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: var(--blue);
+            filter: blur(150px);
+            opacity: 0.15;
+            z-index: -1;
+            border-radius: 50%;
+        }
+        .blob-1 { top: -100px; right: -100px; }
+        .blob-2 { bottom: -100px; left: -100px; background: var(--accent); }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, var(--muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="light"] .header h1 {
+            background: linear-gradient(to right, #0f172a, #64748b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+        }
+
+        .stat-card.green::after { background: var(--green); }
+        .stat-card.red::after { background: var(--red); }
+        .stat-card.blue::after { background: var(--blue); }
+        .stat-card.orange::after { background: var(--orange); }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        /* Table Control Toolbar (Now integrated in Table Card) */
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.75rem;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        input, select {
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            outline: none;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--blue);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .live-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--green);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 20px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        /* Charts Section */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Progress List */
+        .progress-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .progress-track {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--blue), var(--accent));
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+        }
+
+        /* Table */
+        .table-card {
+            overflow: hidden;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 1rem;
+            color: var(--muted);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-success { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .badge-jenjang { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+
+        @media (max-width: 1024px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .header h1 { font-size: 1.5rem; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .search-box { min-width: 100%; }
+            .table-toolbar { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
 <body>
 
-<div class="background-blur"></div>
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
 
-<div class="container" id="dashboard">
-
-    <!-- HEADER -->
-    <header class="header">
-
-        <div>
-            <h1>Dashboard Progres BAP EMIS</h1>
-
-            <p>
-                Monitoring Status Berita Acara Pendataan EMIS Madrasah
-            </p>
-        </div>
-
-        <div class="header-actions">
-
-            <button id="themeToggle" class="btn-action">
-                🌙 Dark Mode
-            </button>
-
-            <button id="exportPDF" class="btn-action">
-                📄 Export PDF
-            </button>
-
-        </div>
-
-    </header>
-
-    <!-- SUMMARY -->
-    <section class="summary-grid">
-
-        <div class="summary-card green">
+    <div class="container" id="capture-area">
+        <!-- HEADER -->
+        <header class="header">
             <div>
-                <h2 id="sudahBap">0</h2>
-                <span>Sudah BAP</span>
+                <h1>Dashboard Progres BAP EMIS</h1>
+                <p style="color: var(--muted)">Monitoring Pendataan Madrasah Real-time</p>
             </div>
+            <div class="header-actions">
+                <button class="btn" id="btnTheme">🌙 Dark Mode</button>
+                <button class="btn" id="btnExport" style="background: var(--blue); color: white; border: none;">
+                    📄 Export PDF
+                </button>
+            </div>
+        </header>
 
-            <div class="summary-icon">
-                ✔
+        <!-- STATS -->
+        <section class="stats-grid">
+            <div class="stat-card green">
+                <h3>Sudah BAP</h3>
+                <div class="value" id="valSudah">0</div>
+            </div>
+            <div class="stat-card red">
+                <h3>Belum BAP</h3>
+                <div class="value" id="valBelum">0</div>
+            </div>
+            <div class="stat-card blue">
+                <h3>Total Madrasah</h3>
+                <div class="value" id="valTotal">0</div>
+            </div>
+            <div class="stat-card orange">
+                <h3>Persentase</h3>
+                <div class="value" id="valPersen">0%</div>
+            </div>
+        </section>
+
+        <!-- CHARTS & PROGRESS -->
+        <div class="main-grid">
+            <div class="card">
+                <div class="card-title">Grafik Progres per Jenjang</div>
+                <div class="chart-container">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">Persentase Capaian</div>
+                <div class="progress-list" id="progressContainer">
+                    <!-- Progress items will be injected here -->
+                </div>
             </div>
         </div>
 
-        <div class="summary-card red">
-            <div>
-                <h2 id="belumBap">0</h2>
-                <span>Belum BAP</span>
+        <!-- TABLE SECTION WITH INTEGRATED FILTER -->
+        <section class="card table-card">
+            <div class="card-title">
+                Data Detail Lembaga
+                <div class="live-tag">
+                    <div class="dot"></div>
+                    Refresh: <span id="timer">30</span>s
+                </div>
             </div>
 
-            <div class="summary-icon">
-                ✖
-            </div>
-        </div>
-
-        <div class="summary-card blue">
-            <div>
-                <h2 id="totalMadrasah">0</h2>
-                <span>Total Madrasah</span>
-            </div>
-
-            <div class="summary-icon">
-                🏫
-            </div>
-        </div>
-
-        <div class="summary-card orange">
-            <div>
-                <h2 id="persenTotal">0%</h2> <span>Persentase BAP</span>
-            </div>
-            <div class="summary-icon">📊</div>
-        </div>
-
-    </section>
-
-    <!-- FILTER -->
-    <section class="toolbar">
-
-        <div class="toolbar-left">
-
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Cari nama madrasah..."
-            >
-
-            <select id="filterJenjang">
-
-                <option value="ALL">
-                    Semua Jenjang
-                </option>
-
-                <option value="RA">RA</option>
-                <option value="MI">MI</option>
-                <option value="MTs">MTs</option>
-                <option value="MA">MA</option>
-
-            </select>
-
-        </div>
-
-        <div class="toolbar-right">
-
-            <div class="live-indicator">
-                <span></span>
-                Auto Refresh 30 Detik
+            <!-- TOOLBAR PINDAH DISINI -->
+            <div class="table-toolbar">
+                <div class="search-box">
+                    <input type="text" id="inpSearch" placeholder="Cari nama madrasah...">
+                    <select id="selJenjang" style="max-width: 180px;">
+                        <option value="ALL">Semua Jenjang</option>
+                        <option value="RA">Jenjang RA</option>
+                        <option value="MI">Jenjang MI</option>
+                        <option value="MTs">Jenjang MTs</option>
+                        <option value="MA">Jenjang MA</option>
+                    </select>
+                </div>
             </div>
 
-        </div>
-
-    </section>
-
-    <!-- CHARTS -->
-    <section class="charts-grid">
-
-        <!-- BAR -->
-        <div class="chart-card large">
-
-            <div class="card-header">
-                <h3>Grafik Progres per Jenjang</h3>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Jenjang</th>
+                            <th>Nama Lembaga</th>
+                            <th>Status BAP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="4" style="text-align:center">Memuat data...</td></tr>
+                    </tbody>
+                </table>
             </div>
+        </section>
+    </div>
 
-            <div class="chart-container">
-                <canvas id="chartJenjang"></canvas>
-            </div>
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbxauRyQz6eSVPdh0NJKhRp64V7vYufiLoc8PdPoEblgwdXP-1usfzJLPZQ8HDJ54HEc/exec";
+        
+        let allData = [];
+        let chartInstance = null;
+        let countdown = 30;
 
-        </div>
+        // Initialize App
+        async function init() {
+            await fetchData();
+            startTimer();
+        }
 
-        <!-- PIE -->
-        <div class="chart-card">
+        async function fetchData() {
+            try {
+                const response = await fetch(API_URL);
+                const result = await response.json();
+                
+                if (result.status) {
+                    allData = result.data;
+                    updateDashboard(result);
+                }
+            } catch (error) {
+                console.error("Fetch Error:", error);
+            }
+        }
 
-            <div class="card-header">
-                <h3>Pie Chart BAP</h3>
-            </div>
+        function updateDashboard(result) {
+            // Summary
+            document.getElementById('valSudah').innerText = result.summary.sudah_bap;
+            document.getElementById('valBelum').innerText = result.summary.belum_bap;
+            document.getElementById('valTotal').innerText = result.summary.total_madrasah;
+            const totalPersen = Math.round((result.summary.sudah_bap / result.summary.total_madrasah) * 100);
+            document.getElementById('valPersen').innerText = totalPersen + '%';
 
-            <div class="chart-container">
-                <canvas id="pieChart"></canvas>
-            </div>
+            // Filter context table
+            filterData();
 
-        </div>
+            // Chart
+            renderChart(result.rekap);
 
-        <!-- DONUT -->
-        <div class="chart-card">
+            // Progress List
+            renderProgress(result.rekap);
+        }
 
-            <div class="card-header">
-                <h3>Donut Persentase</h3>
-            </div>
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color: var(--muted); padding: 2rem;">Data tidak ditemukan</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = data.map(item => `
+                <tr>
+                    <td>${item.no}</td>
+                    <td><span class="badge badge-jenjang">${item.jenjang}</span></td>
+                    <td>${item.nama_lembaga}</td>
+                    <td>
+                        <span class="badge ${item.status_bap == 1 ? 'badge-success' : 'badge-danger'}">
+                            ${item.status_bap == 1 ? 'Sudah BAP' : 'Belum BAP'}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
 
-            <div class="chart-container">
-                <canvas id="donutChart"></canvas>
-            </div>
+        function renderChart(rekap) {
+            const ctx = document.getElementById('barChart').getContext('2d');
+            const labels = rekap.map(r => r.Jenjang);
+            const sudah = rekap.map(r => r["Sudah BAP"]);
+            const belum = rekap.map(r => r["Belum BAP"]);
 
-        </div>
+            if (chartInstance) chartInstance.destroy();
 
-    </section>
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Sudah BAP', data: sudah, backgroundColor: '#22c55e', borderRadius: 6 },
+                        { label: 'Belum BAP', data: belum, backgroundColor: '#ef4444', borderRadius: 6 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: getTextColor(), font: { family: 'Poppins' } } }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: getTextColor() } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: getTextColor() } }
+                    }
+                }
+            });
+        }
 
-    <!-- PERSENTASE -->
-    <section class="progress-section">
+        function renderProgress(rekap) {
+            const container = document.getElementById('progressContainer');
+            container.innerHTML = rekap.map(item => {
+                const p = Math.round((item["Sudah BAP"] / item["Total"]) * 100);
+                return `
+                    <div class="progress-item">
+                        <div class="progress-info">
+                            <span>${item.Jenjang}</span>
+                            <span>${p}%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-bar" style="width: ${p}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
 
-        <div class="progress-card">
+        function getTextColor() {
+            return document.documentElement.getAttribute('data-theme') === 'dark' ? '#94a3b8' : '#64748b';
+        }
 
-            <h3>Persentase per Jenjang</h3>
+        // Timer
+        function startTimer() {
+            const timerInterval = setInterval(() => {
+                countdown--;
+                if (countdown <= 0) {
+                    countdown = 30;
+                    fetchData();
+                }
+                document.getElementById('timer').innerText = countdown;
+            }, 1000);
+        }
 
-            <div id="progressContainer"></div>
+        // Filter Logic
+        document.getElementById('inpSearch').addEventListener('input', filterData);
+        document.getElementById('selJenjang').addEventListener('change', filterData);
 
-        </div>
+        function filterData() {
+            const search = document.getElementById('inpSearch').value.toLowerCase();
+            const jenjang = document.getElementById('selJenjang').value;
 
-        <!-- RANKING -->
-        <div class="ranking-card">
+            const filtered = allData.filter(item => {
+                const matchSearch = item.nama_lembaga.toLowerCase().includes(search);
+                const matchJenjang = jenjang === 'ALL' || item.jenjang === jenjang;
+                return matchSearch && matchJenjang;
+            });
+            renderTable(filtered);
+        }
 
-            <h3>Ranking Progress</h3>
+        // Theme Toggle
+        document.getElementById('btnTheme').addEventListener('click', () => {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', target);
+            document.getElementById('btnTheme').innerText = target === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode';
+            if(allData.length > 0) {
+                renderChart(allData); // Re-render for color update
+                fetchData();
+            }
+        });
 
-            <div id="rankingContainer"></div>
+        // PDF Export
+        document.getElementById('btnExport').addEventListener('click', () => {
+            const element = document.getElementById('capture-area');
+            const { jsPDF } = window.jspdf;
+            
+            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save("Dashboard-BAP-EMIS.pdf");
+            });
+        });
 
-        </div>
-
-    </section>
-
-    <!-- TABLE -->
-    <section class="table-card">
-
-        <div class="card-header">
-            <h3>Data Madrasah</h3>
-        </div>
-
-        <div class="table-wrapper">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-                        <th>No</th>
-                        <th>Jenjang</th>
-                        <th>Nama Lembaga</th>
-                        <th>Status</th>
-                    </tr>
-
-                </thead>
-
-                <tbody id="tableBody"></tbody>
-
-            </table>
-
-        </div>
-
-    </section>
-
-</div>
-
-<!-- SCRIPT -->
-<script src="script.js"></script>
-
+        init();
+    </script>
 </body>
 </html>
