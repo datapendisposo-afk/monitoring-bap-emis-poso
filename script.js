@@ -69,46 +69,25 @@ async function loadData() {
         const result =
             await response.json();
 
-        console.log(result);
+        if (!result.status) return;
 
-        if (!result.status) {
-
-            console.error(
-                "Response status false"
-            );
-
-            return;
-        }
-
-        // UPDATE GLOBAL DATA
         allData = result.data || [];
 
-        // UPDATE SUMMARY
+        lastRekap = result.rekap || [];
+        lastSummary = result.summary || {};
+
         renderSummary(result.summary);
-
-        // UPDATE CHARTS
-        renderCharts(
-            result.rekap,
-            result.summary
-        );
-
-        // UPDATE PROGRESS
+        renderCharts(result.rekap, result.summary);
         renderProgress(result.rekap);
-
-        // UPDATE RANKING
         renderRanking(result.rekap);
 
-        // PENTING:
-        // JANGAN renderTable(allData)
-        // HARUS filterData()
         filterData();
 
-    } catch (error) {
+        // RESET TIMER
+        countdown = 30;
+        timerEl.innerText = countdown;
 
-        console.error(
-            "Fetch Error:",
-            error
-        );
+    } catch (error) {
 
         tableBody.innerHTML = `
             <tr>
@@ -213,9 +192,7 @@ function renderTable(data) {
 function filterData() {
 
     const keyword =
-        searchInput.value
-            .toLowerCase()
-            .trim();
+        searchInput.value.toLowerCase().trim();
 
     const jenjang =
         filterJenjang.value;
@@ -231,8 +208,7 @@ function filterData() {
                     .toLowerCase();
 
             const itemJenjang =
-                String(item.jenjang || "")
-                    .trim();
+                String(item.jenjang || "");
 
             const itemStatus =
                 Number(item.status_bap);
@@ -263,10 +239,9 @@ function filterData() {
 // SEARCH EVENT
 // ======================
 
-searchInput.addEventListener(
-    "input",
-    filterData
-);
+searchInput.addEventListener("input", filterData);
+filterJenjang.addEventListener("change", filterData);
+filterStatusBap.addEventListener("change", filterData);
 
 // ======================
 // FILTER EVENT
@@ -577,39 +552,25 @@ function renderRanking(rekap) {
 // THEME
 // ======================
 
-btnTheme.addEventListener(
-    "click",
-    () => {
+btnTheme.addEventListener("click", () => {
 
-        const html =
-            document.documentElement;
+    const html = document.documentElement;
 
-        const current =
-            html.getAttribute("data-theme");
+    const current =
+        html.getAttribute("data-theme");
 
-        const next =
-            current === "dark"
-            ? "light"
-            : "dark";
+    const next =
+        current === "dark" ? "light" : "dark";
 
-        html.setAttribute(
-            "data-theme",
-            next
-        );
+    html.setAttribute("data-theme", next);
 
-        btnTheme.innerText =
-            next === "dark"
-            ? "🌙 Dark Mode"
-            : "☀️ Light Mode";
+    btnTheme.innerText =
+        next === "dark"
+        ? "🌙 Dark Mode"
+        : "☀️ Light Mode";
 
-        // REFRESH CHART COLOR
-        renderCharts(
-            lastRekap,
-            lastSummary
-        );
-    }
-);
-
+    renderCharts(lastRekap, lastSummary);
+});
 // ======================
 // EXPORT PDF
 // ======================
@@ -678,8 +639,7 @@ setInterval(async () => {
 
     countdown--;
 
-    timerEl.innerText =
-        countdown;
+    timerEl.innerText = countdown;
 
     if (countdown <= 0) {
 
@@ -745,16 +705,18 @@ window.addEventListener("load", () => {
 
 const header = document.querySelector(".header");
 
-window.addEventListener("scroll", () => {
+if (header) {
 
-    if (window.scrollY > 10) {
-        header.classList.add("scrolled");
-    } else {
-        header.classList.remove("scrolled");
-    }
+    window.addEventListener("scroll", () => {
 
-});
+        if (window.scrollY > 10) {
+            header.classList.add("scrolled");
+        } else {
+            header.classList.remove("scrolled");
+        }
 
+    });
+}
 function animateNumber(el, target, duration = 800) {
 
     let start = 0;
@@ -778,4 +740,27 @@ function animateNumber(el, target, duration = 800) {
     }
 
     requestAnimationFrame(animate);
+}
+
+function renderSummary(summary) {
+
+    const total =
+        Number(summary.total_madrasah || 0);
+
+    const sudah =
+        Number(summary.sudah_bap || 0);
+
+    const belum =
+        Number(summary.belum_bap || 0);
+
+    const persen =
+        total > 0
+        ? Math.round((sudah / total) * 100)
+        : 0;
+
+    animateNumber(valSudah, sudah);
+    animateNumber(valBelum, belum);
+    animateNumber(valTotal, total);
+
+    valPersen.innerText = persen + "%";
 }
