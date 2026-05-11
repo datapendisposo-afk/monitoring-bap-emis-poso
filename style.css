@@ -1239,6 +1239,51 @@ RESPONSIVE
 
         font-size:13px;
     }
+
+    /* PERBAIKAN PASTI - HEADER TIDAK BERGERAK */
+.header {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+}
+
+/* Pastikan body tidak memberikan margin/padding berlebih */
+body {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px !important;
+    overflow-x: hidden;
+}
+
+/* Container harus relative */
+.container {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* Hapus kemungkinan fixed pada header di semua kondisi */
+header.header,
+div.header,
+.header[class*="header"] {
+    position: relative !important;
+    position: sticky !important;
+    top: 0 !important;
+}
+
+/* Sticky header alternatif - jika ingin tetap terlihat saat scroll */
+/* Gunakan sticky jika ingin header tetap terlihat, tapi tidak bergerak bebas */
+.header {
+    position: sticky !important;
+    top: 0 !important;
+    background: var(--card) !important;
+    backdrop-filter: blur(16px) !important;
+    z-index: 999 !important;
+}
     
     /* RESPONSIVE UNTUK BODY */
     body{
