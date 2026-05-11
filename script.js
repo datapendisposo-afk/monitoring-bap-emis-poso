@@ -216,18 +216,22 @@ function filterData() {
     const jenjang =
         filterJenjang.value;
 
+    const statusBap =
+        filterStatusBap.value;
+
     const filtered =
         allData.filter(item => {
 
             const nama =
-                String(
-                    item.nama_lembaga || ""
-                ).toLowerCase();
+                String(item.nama_lembaga || "")
+                    .toLowerCase();
 
             const itemJenjang =
-                String(
-                    item.jenjang || ""
-                ).trim();
+                String(item.jenjang || "")
+                    .trim();
+
+            const itemStatus =
+                Number(item.status_bap);
 
             const matchSearch =
                 nama.includes(keyword);
@@ -236,9 +240,15 @@ function filterData() {
                 jenjang === "ALL" ||
                 itemJenjang === jenjang;
 
+            const matchStatus =
+                statusBap === "ALL" ||
+                (statusBap === "SUDAH" && itemStatus === 1) ||
+                (statusBap === "BELUM" && itemStatus === 0);
+
             return (
                 matchSearch &&
-                matchJenjang
+                matchJenjang &&
+                matchStatus
             );
         });
 
@@ -259,6 +269,11 @@ searchInput.addEventListener(
 // ======================
 
 filterJenjang.addEventListener(
+    "change",
+    filterData
+);
+
+filterStatusBap.addEventListener(
     "change",
     filterData
 );
