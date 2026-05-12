@@ -225,7 +225,7 @@ RUNNING TEXT - FIXED (IKUT TIDAK BERGERAK)
 
 .running-info {
   position: fixed !important;
-  top: 110px !important; /* sesuaikan dengan tinggi header */
+  top: 100px !important; /* sesuaikan dengan tinggi header */
   left: 50% !important;
   transform: translateX(-50%) !important;
   
@@ -235,7 +235,7 @@ RUNNING TEXT - FIXED (IKUT TIDAK BERGERAK)
   margin: 0 !important;
   
   /* Pertahankan gaya visual asli */
-  height: 46px;
+   /* height: 46px; */
   display: flex; /* ubah dari 'none' menjadi 'flex' agar tampil */
   align-items: center;
   overflow: hidden;
@@ -297,7 +297,7 @@ SUMMARY
 .summary-card::before {
     content: '';
     position: absolute;
-    top: 0;
+    top: 10;
     left: 0;
     width: 5px;
     height: 100%;
