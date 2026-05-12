@@ -220,6 +220,161 @@
     </div>
 
     <script src="script.js"></script>
+
+    // ======================
+// MEMBUAT HEADER DAN RUNNING TEXT STICKY DENGAN JAVASCRIPT
+// ======================
+
+(function() {
+    // Ambil elemen
+    const header = document.querySelector('.header');
+    const runningInfo = document.querySelector('.running-info');
+    const container = document.querySelector('.container');
+    
+    if (!header) return;
+    
+    // Buat elemen placeholder untuk mencegah loncatan
+    const headerPlaceholder = document.createElement('div');
+    headerPlaceholder.className = 'header-placeholder';
+    headerPlaceholder.style.display = 'none';
+    
+    const runningPlaceholder = document.createElement('div');
+    runningPlaceholder.className = 'running-placeholder';
+    runningPlaceholder.style.display = 'none';
+    
+    // Fungsi untuk cek apakah sticky aktif
+    let headerSticky = false;
+    let runningSticky = false;
+    
+    function checkSticky() {
+        const scrollY = window.scrollY;
+        const headerRect = header.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        
+        // Header sticky logic
+        if (scrollY > 50 && !headerSticky) {
+            // Simpan posisi original
+            if (!headerPlaceholder.parentNode) {
+                header.parentNode.insertBefore(headerPlaceholder, header);
+                headerPlaceholder.style.height = header.offsetHeight + 'px';
+                headerPlaceholder.style.display = 'block';
+            }
+            header.classList.add('header-sticky-active');
+            headerSticky = true;
+        } else if (scrollY <= 50 && headerSticky) {
+            if (headerPlaceholder.parentNode) {
+                headerPlaceholder.remove();
+            }
+            header.classList.remove('header-sticky-active');
+            headerSticky = false;
+        }
+        
+        // Running info sticky logic (hanya jika running info ada dan ditampilkan)
+        if (runningInfo && window.getComputedStyle(runningInfo).display !== 'none') {
+            const runningRect = runningInfo.getBoundingClientRect();
+            const headerHeight = header.offsetHeight;
+            
+            if (scrollY > headerHeight + 50 && !runningSticky) {
+                if (!runningPlaceholder.parentNode && runningInfo.parentNode) {
+                    runningInfo.parentNode.insertBefore(runningPlaceholder, runningInfo);
+                    runningPlaceholder.style.height = runningInfo.offsetHeight + 'px';
+                    runningPlaceholder.style.display = 'block';
+                }
+                runningInfo.classList.add('running-sticky-active');
+                runningSticky = true;
+            } else if (scrollY <= headerHeight + 50 && runningSticky) {
+                if (runningPlaceholder.parentNode) {
+                    runningPlaceholder.remove();
+                }
+                runningInfo.classList.remove('running-sticky-active');
+                runningSticky = false;
+            }
+        }
+    }
+    
+    // Tambahkan CSS untuk class sticky
+    const style = document.createElement('style');
+    style.textContent = `
+        .header-sticky-active {
+            position: fixed !important;
+            top: 0 !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: calc(100% - 40px) !important;
+            max-width: 1360px !important;
+            z-index: 10000 !important;
+            margin: 0 !important;
+            animation: slideDown 0.3s ease !important;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3) !important;
+        }
+        
+        .running-sticky-active {
+            position: fixed !important;
+            top: 80px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: calc(100% - 40px) !important;
+            max-width: 1360px !important;
+            z-index: 9999 !important;
+            margin: 0 !important;
+            animation: slideDown 0.3s ease !important;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        /* Light mode adjustment */
+        [data-theme="light"] .header-sticky-active {
+            background: rgba(255,255,255,0.95) !important;
+            backdrop-filter: blur(16px) !important;
+        }
+        
+        @media (max-width: 768px) {
+            .header-sticky-active,
+            .running-sticky-active {
+                width: calc(100% - 30px) !important;
+            }
+            
+            .running-sticky-active {
+                top: 70px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-sticky-active,
+            .running-sticky-active {
+                width: calc(100% - 20px) !important;
+            }
+            
+            .running-sticky-active {
+                top: 65px !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Event listeners
+    window.addEventListener('scroll', checkSticky);
+    window.addEventListener('resize', function() {
+        if (headerSticky) {
+            headerPlaceholder.style.height = header.offsetHeight + 'px';
+        }
+        if (runningSticky && runningInfo) {
+            runningPlaceholder.style.height = runningInfo.offsetHeight + 'px';
+        }
+    });
+    
+    // Initial check
+    setTimeout(checkSticky, 100);
+})();
 </body>
 
 </html>
