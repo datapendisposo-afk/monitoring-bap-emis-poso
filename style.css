@@ -1270,4 +1270,51 @@ RESPONSIVE
     .running-info{
         top: 70px !important;
     }
+
+    /* SOLUSI PASTI - HEADER DAN RUNNING TEXT TIDAK BERGERAK */
+.header {
+    position: fixed !important;
+    top: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 40px) !important;
+    max-width: 1360px !important;
+    z-index: 9999 !important;
+    margin: 0 !important;
+}
+
+.running-info {
+    position: fixed !important;
+    top: 110px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 40px) !important;
+    max-width: 1360px !important;
+    z-index: 9998 !important;
+    margin: 0 !important;
+}
+
+/* Beri padding pada container agar konten tidak tertutup header */
+.container {
+    padding-top: 160px !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .running-info {
+        top: 100px !important;
+    }
+    .container {
+        padding-top: 140px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .running-info {
+        top: 90px !important;
+    }
+    .container {
+        padding-top: 130px !important;
+    }
+}
 }
