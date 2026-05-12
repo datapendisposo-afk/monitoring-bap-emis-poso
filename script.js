@@ -224,7 +224,6 @@ function renderSummary(summary = {}) {
 function renderTable(data = []) {
 
     if (!data.length) {
-
         tableBody.innerHTML = `
             <tr>
                 <td colspan="4" class="loading">
@@ -232,51 +231,47 @@ function renderTable(data = []) {
                 </td>
             </tr>
         `;
-
         return;
     }
 
-    tableBody.innerHTML =
-        data.map(item => {
+    let html = "";
 
-            return `
-                <tr>
+    data.forEach((item, index) => {
 
-                    <td>
-                        ${item.no || "-"}
-                    </td>
+        html += `
+            <tr>
 
-                    <td>
-                        <span class="badge badge-jenjang">
-                            ${item.jenjang || "-"}
-                        </span>
-                    </td>
+                <!-- ✅ NOMOR DINAMIS -->
+                <td>${index + 1}</td>
 
-                    <td>
-                        ${item.nama_lembaga || "-"}
-                    </td>
+                <td>
+                    <span class="badge badge-jenjang">
+                        ${item.jenjang || "-"}
+                    </span>
+                </td>
 
-                    <td>
+                <td>
+                    ${item.nama_lembaga || "-"}
+                </td>
 
-                        <span class="
-                            badge
-                            ${isSudahBap(item.status_bap)
-                                ? "badge-success"
-                                : "badge-danger"}
-                        ">
+                <td>
+                    <span class="
+                        badge
+                        ${isSudahBap(item.status_bap)
+                            ? "badge-success"
+                            : "badge-danger"}
+                    ">
+                        ${isSudahBap(item.status_bap)
+                            ? "Sudah BAP"
+                            : "Belum BAP"}
+                    </span>
+                </td>
 
-                            ${isSudahBap(item.status_bap)
-                                ? "Sudah BAP"
-                                : "Belum BAP"}
+            </tr>
+        `;
+    });
 
-                        </span>
-
-                    </td>
-
-                </tr>
-            `;
-
-        }).join("");
+    tableBody.innerHTML = html;
 }
 
 // ======================
@@ -837,7 +832,7 @@ btnExport.addEventListener(
 
         const element =
             document.getElementById(
-                "capture-area"
+                ".container"
             );
 
         const { jsPDF } =
@@ -946,7 +941,7 @@ filterStatusBap.addEventListener(
 loadData();
 
 document.addEventListener('DOMContentLoaded', () => {
-    const popupOverlay = document.getElementById('popupOverlay');
+    
     const popupClose = document.getElementById('popupClose');
     const popupContent = document.getElementById('popupContent');
 
