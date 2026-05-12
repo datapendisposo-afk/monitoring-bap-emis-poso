@@ -218,10 +218,6 @@ BUTTON
 }
 
 /* ======================
-RUNNING TEXT (SEMENTARA DISEMBUNYIKAN)
-====================== */
-
-/* ======================
 RUNNING TEXT - FIXED (IKUT TIDAK BERGERAK)
 ====================== */
 
@@ -237,7 +233,7 @@ RUNNING TEXT - FIXED (IKUT TIDAK BERGERAK)
   margin: 0 !important;
   
   /* Pertahankan gaya visual asli */
-  min-height: 46px;
+  min-height: 35px;
   padding: 10px 20px;
   display: flex; /* ubah dari 'none' menjadi 'flex' agar tampil */
   align-items: center;
