@@ -962,17 +962,17 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // 3. Trigger: Munculkan saat halaman baru dibuka (Contoh)
-    setTimeout(() => {
-        showPopup(`
-            <p>Selamat datang di <strong>Dashboard BAP EMIS 2026</strong>.</p>
-            <br>
+   // setTimeout(() => {
+   //     showPopup(`
+    //        <p>Selamat datang di <strong>Dashboard BAP EMIS 2026</strong>.</p>
+   //         <br>
             // <ul>
             //    <li>Data diupdate setiap 30 detik secara otomatis.</li>
             //    <li>Gunakan fitur Export PDF untuk laporan mingguan.</li>
             //    <li>Pastikan koneksi internet stabil saat sinkronisasi data.</li>
             // </ul>
-        `);
-    }, 1000); // Muncul setelah 1 detik
+   //     `);
+  //  }, 1000); // Muncul setelah 1 detik
 
     // 4. Event Listener untuk tombol tutup
     popupClose.addEventListener('click', closePopup);
