@@ -220,6 +220,7 @@ RUNNING TEXT (SEMENTARA DISEMBUNYIKAN)
 ====================== */
 
 .running-info {
+    
     width: 100%;
     height: 46px;
     display: none; /* ubah ke 'flex' jika ingin ditampilkan */
@@ -229,8 +230,8 @@ RUNNING TEXT (SEMENTARA DISEMBUNYIKAN)
     border-radius: 16px;
     background: linear-gradient(90deg, #2563eb, #1d4ed8);
     color: #ffffff;
-    position: sticky !important;
-    top: 100px !important;
+    position: fixed !important;
+    top: 80px !important;
     z-index: 9998 !important;
 }
 
@@ -775,8 +776,12 @@ RESPONSIVE
 
 @media (max-width: 768px) {
     .container {
-        padding: 16px;
-        padding-top: 100px !important;
+        position: relative;
+          width: 100%;
+          max-width: 1400px;
+          margin: 0 auto;
+          padding: 20px;
+          padding-top: 150px !important;
     }
 
     .header {
