@@ -219,20 +219,29 @@ BUTTON
 RUNNING TEXT (SEMENTARA DISEMBUNYIKAN)
 ====================== */
 
+/* ======================
+RUNNING TEXT - FIXED (IKUT TIDAK BERGERAK)
+====================== */
+
 .running-info {
-    
-    width: 100%;
-    height: 46px;
-    display: none; /* ubah ke 'flex' jika ingin ditampilkan */
-    align-items: center;
-    overflow: hidden;
-    margin-bottom: 24px;
-    border-radius: 16px;
-    background: linear-gradient(90deg, #2563eb, #1d4ed8);
-    color: #ffffff;
-    position: fixed !important;
-    top: 80px !important;
-    z-index: 9998 !important;
+  position: fixed !important;
+  top: 80px !important; /* sesuaikan dengan tinggi header */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  
+  width: calc(100% - 40px) !important;
+  max-width: 1360px !important;
+  z-index: 9998 !important;
+  margin: 0 !important;
+  
+  /* Pertahankan gaya visual asli */
+  height: 46px;
+  display: flex; /* ubah dari 'none' menjadi 'flex' agar tampil */
+  align-items: center;
+  overflow: hidden;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #2563eb, #1d4ed8);
+  color: #ffffff;
 }
 
 .running-track {
