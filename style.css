@@ -225,7 +225,7 @@ RUNNING TEXT - FIXED (IKUT TIDAK BERGERAK)
 
 .running-info {
   position: fixed !important;
-  top: 125px !important; /* sesuaikan dengan tinggi header */
+  top: 110px !important; /* sesuaikan dengan tinggi header */
   left: 50% !important;
   transform: translateX(-50%) !important;
   
