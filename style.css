@@ -890,8 +890,8 @@ RESPONSIVE
     }
 
     .running-info {
-        top: 105px !important;
-        height: 42px;
+        top: 90px !important;
+        height: 30px;
         border-radius: 14px;
     }
 }
