@@ -162,16 +162,14 @@ CONTAINER
 }
 
 /* ======================
-HEADER - TIDAK BERGERAK (RELATIVE)
+HEADER - STICKY (TIDAK BERGERAK SAAT SCROLL)
 ====================== */
 
 .header{
 
-    position: relative; /* DIUBAH DARI fixed MENJADI relative */
-
-    top:0;
-
-    z-index:9999;
+    position: sticky !important;
+    top: 20px !important;
+    z-index: 9999 !important;
 
     display:flex;
 
@@ -198,6 +196,13 @@ HEADER - TIDAK BERGERAK (RELATIVE)
     border:1px solid rgba(255,255,255,0.06);
 
     backdrop-filter:blur(16px);
+    
+    transition: all 0.3s ease;
+}
+
+/* Efek shadow saat discroll */
+.header.sticky-shadow {
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.3);
 }
 
 [data-theme="light"] .header{
@@ -284,7 +289,7 @@ BUTTON
 }
 
 /* ======================
-RUNNING TEXT
+RUNNING TEXT - STICKY (TIDAK BERGERAK SAAT SCROLL)
 ====================== */
 
 .running-info{
@@ -293,7 +298,7 @@ RUNNING TEXT
 
     height:46px;
 
-    display:none;
+    display: none; /* Ubah ke 'flex' jika ingin ditampilkan */
 
     align-items:center;
 
@@ -310,6 +315,11 @@ RUNNING TEXT
     );
 
     color:#ffffff;
+    
+    /* Membuat running text sticky juga */
+    position: sticky !important;
+    top: 100px !important; /* Jarak dari header */
+    z-index: 9998 !important;
 }
 
 .running-track{
@@ -1148,6 +1158,8 @@ RESPONSIVE
         align-items:flex-start;
 
         padding:18px;
+        
+        top: 10px !important;
     }
 
     .header h1{
@@ -1209,12 +1221,21 @@ RESPONSIVE
     body{
         padding: 0 16px;
     }
+    
+    /* Running text responsive */
+    .running-info{
+        top: 80px !important;
+    }
 }
 
 @media(max-width:480px){
 
     .header h1{
         font-size:26px;
+    }
+    
+    .header{
+        top: 5px !important;
     }
 
     .summary-card{
@@ -1239,54 +1260,14 @@ RESPONSIVE
 
         font-size:13px;
     }
-
-    /* PERBAIKAN PASTI - HEADER TIDAK BERGERAK */
-.header {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    transform: none !important;
-}
-
-/* Pastikan body tidak memberikan margin/padding berlebih */
-body {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px !important;
-    overflow-x: hidden;
-}
-
-/* Container harus relative */
-.container {
-    position: relative;
-    width: 100%;
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0;
-}
-
-/* Hapus kemungkinan fixed pada header di semua kondisi */
-header.header,
-div.header,
-.header[class*="header"] {
-    position: relative !important;
-    position: sticky !important;
-    top: 0 !important;
-}
-
-/* Sticky header alternatif - jika ingin tetap terlihat saat scroll */
-/* Gunakan sticky jika ingin header tetap terlihat, tapi tidak bergerak bebas */
-.header {
-    position: sticky !important;
-    top: 0 !important;
-    background: var(--card) !important;
-    backdrop-filter: blur(16px) !important;
-    z-index: 999 !important;
-}
     
     /* RESPONSIVE UNTUK BODY */
     body{
         padding: 0 12px;
+    }
+    
+    /* Running text responsive */
+    .running-info{
+        top: 70px !important;
     }
 }
