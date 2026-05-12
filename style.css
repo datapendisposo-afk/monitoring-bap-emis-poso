@@ -23,6 +23,8 @@ ROOT
     --red: #ef4444;
     --blue: #3b82f6;
     --orange: #f59e0b;
+    --header-height: 100px;
+    --running-height: 60px;
 }
 
 /* ======================
@@ -123,7 +125,7 @@ CONTAINER - DENGAN PADDING TOP AGAR TIDAK TERTUTUP HEADER
     max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
-    padding-top: 150px !important; /* ruang untuk header fixed */
+    padding-top: calc(var(--header-height) + var(--running-height) + 20px);
 }
 
 /* ======================
@@ -225,7 +227,7 @@ RUNNING TEXT - FIXED (IKUT TIDAK BERGERAK)
 
 .running-info {
   position: fixed !important;
-  top: 100px !important; /* sesuaikan dengan tinggi header */
+  top: 130px !important; /* sesuaikan dengan tinggi header */
   left: 50% !important;
   transform: translateX(-50%) !important;
   
@@ -832,6 +834,7 @@ RESPONSIVE
 
     .card {
         padding: 18px;
+        margin-top: 10px;
     }
 
     .summary-card h2 {
