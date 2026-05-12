@@ -790,7 +790,7 @@ RESPONSIVE
           max-width: 1400px;
           margin: 0 auto;
           padding: 20px;
-          padding-top: 150px !important;
+          padding-top: 120px !important;
     }
 
     .header {
@@ -854,7 +854,7 @@ RESPONSIVE
 
 @media (max-width: 480px) {
     .container {
-        padding-top: 90px !important;
+        padding-top: 60px !important;
     }
 
     .header h1 {
