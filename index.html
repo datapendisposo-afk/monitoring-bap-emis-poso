@@ -55,25 +55,24 @@
         HEADER - MENGGUNAKAN CLASS .header (SESUAI CSS)
         ========================= -->
 
-        <div class="header">
-            <div class="header-left">
-                <h1>Dashboard Progres BAP EMIS</h1>
-                <p>Monitoring Status Berita Acara Pendataan EMIS Madrasah</p>
-            </div>
-            <div class="header-actions">
-                <button class="btn" id="btnTheme" type="button">🌙 Dark Mode</button>
-                <button class="btn primary" id="btnExport" type="button">📄 Export PDF</button>
-                <!-- <button class="btn" id="btnInfo" type="button">ℹ️ Info</button> -->
-            </div>
-            <!-- =========================
-        RUNNING INFO
-        ========================= -->
-
-        <section class="running-info" id="runningInfo">
-            <div class="running-track" id="runningTrack"></div>
-        </section>
+        <header class="header">
+    <div class="header-top">
+        <div class="header-left">
+            <h1>Dashboard Progres BAP EMIS</h1>
+            <p>Monitoring Status Berita Acara Pendataan EMIS Madrasah</p>
         </div>
 
+        <div class="header-actions">
+            <button class="btn" id="btnTheme" type="button">🌙 Dark Mode</button>
+            <button class="btn primary" id="btnExport" type="button">📄 Export PDF</button>
+        </div>
+    </div>
+
+    <!-- RUNNING INFO MENYATU DENGAN HEADER -->
+    <div class="running-info" id="runningInfo">
+        <div class="running-track" id="runningTrack"></div>
+    </div>
+</header>
         
 
         <!-- =========================
