@@ -131,7 +131,7 @@ HEADER
 .header {
     position: sticky;
     top: 0;
-    z-index: 9999;
+    z-index: 1000;
 
     display: flex;
     flex-direction: column;
@@ -150,6 +150,8 @@ HEADER
     -webkit-backdrop-filter: blur(16px);
 
     transition: 0.3s ease;
+
+    overflow: visible;
 }
 
 /* LIGHT HEADER */
@@ -677,6 +679,111 @@ LOADING
 }
 
 /* ======================
+POPUP
+====================== */
+
+.popup-overlay {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.65);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    z-index: 999999;
+
+    overflow-y: auto;
+}
+
+.popup-overlay.active {
+    display: flex;
+}
+
+.popup-box {
+    position: relative;
+
+    width: 100%;
+    max-width: 520px;
+
+    padding: 28px;
+
+    border-radius: 28px;
+
+    background: var(--card);
+    border: 1px solid var(--border);
+
+    animation: popupShow 0.3s ease;
+
+    z-index: 1000000;
+}
+
+@keyframes popupShow {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.popup-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+
+    font-size: 18px;
+
+    transition: 0.2s ease;
+}
+
+.popup-close:hover {
+    transform: scale(1.05);
+    background: rgba(255,255,255,0.15);
+}
+
+.popup-header {
+    margin-bottom: 18px;
+}
+
+.popup-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.popup-content {
+    line-height: 1.7;
+    font-size: 15px;
+}
+
+/* ======================
 FOOTER
 ====================== */
 
@@ -692,89 +799,13 @@ FOOTER
     backdrop-filter: blur(14px);
 }
 
-.footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    gap: 25px;
-    flex-wrap: wrap;
-}
-
-.footer-left h3 {
-    margin-bottom: 6px;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.footer-left p {
-    color: var(--muted);
-    font-size: 14px;
-}
-
-.footer-badge {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    padding: 10px 18px;
-    border-radius: 30px;
-
-    background: rgba(34,197,94,0.12);
-    border: 1px solid rgba(34,197,94,0.25);
-
-    color: #4ade80;
-
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.footer-dot {
-    width: 10px;
-    height: 10px;
-
-    border-radius: 50%;
-    background: #22c55e;
-
-    animation: footerPulse 1.5s infinite;
-}
-
-@keyframes footerPulse {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(2.2);
-        opacity: 0;
-    }
-}
-
-/* ======================
-SCROLLBAR
-====================== */
-
-::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.12);
-    border-radius: 20px;
-}
-
 /* ======================
 RESPONSIVE
 ====================== */
 
 @media (max-width: 992px) {
 
-    .charts-grid {
-        grid-template-columns: 1fr;
-    }
-
+    .charts-grid,
     .progress-grid {
         grid-template-columns: 1fr;
     }
@@ -807,10 +838,6 @@ RESPONSIVE
         font-size: 32px;
     }
 
-    .header-left p {
-        font-size: 13px;
-    }
-
     .toolbar-left {
         width: 100%;
         flex-direction: column;
@@ -830,21 +857,8 @@ RESPONSIVE
         flex: 1;
     }
 
-    .chart-container {
-        height: 280px;
-    }
-
-    .card {
-        padding: 18px;
-    }
-
     .summary-card h2 {
         font-size: 34px;
-    }
-
-    .footer-content {
-        flex-direction: column;
-        align-items: flex-start;
     }
 }
 
@@ -867,37 +881,16 @@ RESPONSIVE
         grid-template-columns: 1fr;
     }
 
-    .summary-card {
-        padding: 20px;
-    }
-
     .summary-card h2 {
         font-size: 28px;
     }
 
-    .running-info {
-        min-height: 42px;
-        border-radius: 14px;
-    }
-
-    .running-item {
-        font-size: 13px;
-    }
-
-    table th,
-    table td {
-        padding: 12px;
-        font-size: 13px;
+    .header-actions {
+        flex-direction: column;
+        width: 100%;
     }
 
     .btn {
-        width: 100%;
-        padding: 10px 14px;
-        font-size: 13px;
-    }
-
-    .header-actions {
-        flex-direction: column;
         width: 100%;
     }
 }
