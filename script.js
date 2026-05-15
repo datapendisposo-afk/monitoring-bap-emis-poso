@@ -322,23 +322,48 @@ function buildInfoText(item) {
 
     const tipe =
         String(item.tipe || "")
-            .toLowerCase();
+            .toLowerCase()
+            .trim();
 
     const uraian =
         item.uraian || "";
 
-    if (tipe === "hitungan") {
+    const tanggal =
+        String(item.tanggal || "")
+            .trim();
+
+    // ======================
+    // COUNTDOWN
+    // ======================
+
+    if (
+        tipe === "hitungan" &&
+        tanggal
+    ) {
+
         return `
-            ⏳ ${uraian}
+            <div class="info-text">
+                ⏳ ${uraian}
+            </div>
+
             <div
                 class="countdown"
-                data-countdown="${item.tanggal}">
-                ${getCountdown(item.tanggal)}
+                data-countdown="${tanggal}"
+            >
+                ${getCountdown(tanggal)}
             </div>
         `;
     }
 
-    return `📢 ${uraian}`;
+    // ======================
+    // TEXT BIASA
+    // ======================
+
+    return `
+        <div class="info-text">
+            📢 ${uraian}
+        </div>
+    `;
 }
 
 function renderInfo(data=[]) {
