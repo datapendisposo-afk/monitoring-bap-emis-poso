@@ -1,24 +1,14 @@
 const API_URL =
     "https://script.google.com/macros/s/AKfycbxauRyQz6eSVPdh0NJKhRp64V7vYufiLoc8PdPoEblgwdXP-1usfzJLPZQ8HDJ54HEc/exec";
 
-// ======================
-// ELEMENT
-// ======================
-
-const tableBody =
-    document.getElementById("tableBody");
-
-const valSudah =
-    document.getElementById("valSudah");
-
-const valBelum =
-    document.getElementById("valBelum");
-
-const valTotal =
-    document.getElementById("valTotal");
-
-const valPersen =
-    document.getElementById("valPersen");
+/* ======================
+   ELEMENT
+====================== */
+const tableBody = document.getElementById("tableBody");
+const valSudah = document.getElementById("valSudah");
+const valBelum = document.getElementById("valBelum");
+const valTotal = document.getElementById("valTotal");
+const valPersen = document.getElementById("valPersen");
 
 const progressContainer =
     document.getElementById("progressContainer");
@@ -44,19 +34,11 @@ const btnExport =
 const timerEl =
     document.getElementById("timer");
 
-// ======================
-// RUNNING TEXT
-// ======================
-
 const runningInfo =
     document.getElementById("runningInfo");
 
 const runningTrack =
     document.getElementById("runningTrack");
-
-// ======================
-// POPUP
-// ======================
 
 const popupOverlay =
     document.getElementById("popupOverlay");
@@ -67,45 +49,88 @@ const popupContent =
 const popupClose =
     document.getElementById("popupClose");
 
-// ======================
-// GLOBAL
-// ======================
 
+/* ======================
+   GLOBAL
+====================== */
 let allData = [];
-
 let charts = {};
-
-let countdown = 30;
-
+let countdownRefresh = 30;
+let popupAlreadyShown = false;
 let lastRekap = [];
-
 let lastSummary = {};
 
-let popupAlreadyShown = false;
 
-// ======================
-// STATUS HELPER
-// ======================
-
+/* ======================
+   HELPER
+====================== */
 function isSudahBap(status) {
-
     const value =
         String(status || "")
             .toLowerCase()
             .trim();
 
-    return (
-        value === "1" ||
-        value === "sudah" ||
-        value === "sudah bap" ||
-        value === "true"
-    );
+    return [
+        "1",
+        "sudah",
+        "sudah bap",
+        "true"
+    ].includes(value);
 }
 
-// ======================
-// LOAD DATA
-// ======================
+function getTextColor() {
+    return document.documentElement
+        .getAttribute("data-theme") === "dark"
+        ? "#94a3b8"
+        : "#475569";
+}
 
+
+/* ======================
+   COUNTDOWN
+====================== */
+function getCountdown(dateString) {
+
+    if (!dateString)
+        return "0h 0j 0m 0d";
+
+    const target =
+        new Date(dateString).getTime();
+
+    const now =
+        new Date().getTime();
+
+    const diff =
+        target - now;
+
+    if (diff <= 0)
+        return "Selesai";
+
+    const hari =
+        Math.floor(diff / 86400000);
+
+    const jam =
+        Math.floor(
+            (diff % 86400000) / 3600000
+        );
+
+    const menit =
+        Math.floor(
+            (diff % 3600000) / 60000
+        );
+
+    const detik =
+        Math.floor(
+            (diff % 60000) / 1000
+        );
+
+    return `${hari}h ${jam}j ${menit}m ${detik}d`;
+}
+
+
+/* ======================
+   LOAD DATA
+====================== */
 async function loadData() {
 
     try {
@@ -113,23 +138,18 @@ async function loadData() {
         const response =
             await fetch(API_URL);
 
+        if (!response.ok)
+            throw new Error(
+                "Gagal koneksi API"
+            );
+
         const result =
             await response.json();
 
-        console.log(result);
-
-        if (!result.status) {
-
-            console.error(
-                "Response status false"
+        if (!result.status)
+            throw new Error(
+                "Status API false"
             );
-
-            return;
-        }
-
-        // ======================
-        // GLOBAL CACHE
-        // ======================
 
         allData =
             result.data || [];
@@ -139,10 +159,6 @@ async function loadData() {
 
         lastSummary =
             result.summary || {};
-
-        // ======================
-        // RENDER
-        // ======================
 
         renderSummary(
             result.summary
@@ -167,31 +183,25 @@ async function loadData() {
 
         filterData();
 
-    } catch (error) {
+    } catch (err) {
 
-        console.error(
-            "Fetch Error:",
-            error
-        );
+        console.error(err);
 
-        if (tableBody) {
-
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="4" class="loading">
-                        Gagal mengambil data
-                    </td>
-                </tr>
-            `;
-        }
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4" class="loading">
+                    Gagal mengambil data
+                </td>
+            </tr>
+        `;
     }
 }
 
-// ======================
-// SUMMARY
-// ======================
 
-function renderSummary(summary = {}) {
+/* ======================
+   SUMMARY
+====================== */
+function renderSummary(summary={}) {
 
     const total =
         Number(summary.total_madrasah || 0);
@@ -202,26 +212,25 @@ function renderSummary(summary = {}) {
     const belum =
         Number(summary.belum_bap || 0);
 
-    valSudah.innerText = sudah;
-    valBelum.innerText = belum;
-    valTotal.innerText = total;
-
     const persen =
-        total > 0
+        total
         ? Math.round(
-            (sudah / total) * 100
+            sudah / total * 100
         )
         : 0;
 
+    valSudah.innerText = sudah;
+    valBelum.innerText = belum;
+    valTotal.innerText = total;
     valPersen.innerText =
         persen + "%";
 }
 
-// ======================
-// TABLE
-// ======================
 
-function renderTable(data = []) {
+/* ======================
+   TABLE
+====================== */
+function renderTable(data=[]) {
 
     if (!data.length) {
         tableBody.innerHTML = `
@@ -234,50 +243,37 @@ function renderTable(data = []) {
         return;
     }
 
-    let html = "";
-
-    data.forEach((item, index) => {
-
-        html += `
+    tableBody.innerHTML =
+        data.map((item,i)=>`
             <tr>
-
-                <!-- ✅ NOMOR DINAMIS -->
-                <td>${index + 1}</td>
-
+                <td>${i+1}</td>
                 <td>
                     <span class="badge badge-jenjang">
                         ${item.jenjang || "-"}
                     </span>
                 </td>
-
+                <td>${item.nama_lembaga || "-"}</td>
                 <td>
-                    ${item.nama_lembaga || "-"}
-                </td>
-
-                <td>
-                    <span class="
-                        badge
-                        ${isSudahBap(item.status_bap)
-                            ? "badge-success"
-                            : "badge-danger"}
-                    ">
-                        ${isSudahBap(item.status_bap)
+                    <span class="badge ${
+                        isSudahBap(item.status_bap)
+                        ? "badge-success"
+                        : "badge-danger"
+                    }">
+                        ${
+                            isSudahBap(item.status_bap)
                             ? "Sudah BAP"
-                            : "Belum BAP"}
+                            : "Belum BAP"
+                        }
                     </span>
                 </td>
-
             </tr>
-        `;
-    });
-
-    tableBody.innerHTML = html;
+        `).join("");
 }
 
-// ======================
-// FILTER
-// ======================
 
+/* ======================
+   FILTER
+====================== */
 function filterData() {
 
     const keyword =
@@ -288,163 +284,104 @@ function filterData() {
     const jenjang =
         filterJenjang.value;
 
-    const statusFilter =
+    const status =
         filterStatusBap.value;
 
     const filtered =
         allData.filter(item => {
 
             const nama =
-                String(
-                    item.nama_lembaga || ""
-                ).toLowerCase();
+                String(item.nama_lembaga || "")
+                .toLowerCase();
 
-            const itemJenjang =
-                String(
-                    item.jenjang || ""
-                ).trim();
+            const j =
+                item.jenjang;
 
-            const status =
+            const s =
                 isSudahBap(item.status_bap)
                 ? "SUDAH"
                 : "BELUM";
 
             return (
-                nama.includes(keyword) &&
-                (
-                    jenjang === "ALL" ||
-                    itemJenjang === jenjang
-                ) &&
-                (
-                    statusFilter === "ALL" ||
-                    status === statusFilter
-                )
+                nama.includes(keyword)
+                &&
+                (jenjang==="ALL" || j===jenjang)
+                &&
+                (status==="ALL" || s===status)
             );
         });
 
     renderTable(filtered);
 }
 
-// ======================
-// INFO
-// ======================
 
-function getCountdownDays(dateString) {
-
-    if (!dateString) return 0;
-
-    const target =
-        new Date(dateString);
-
-    const today =
-        new Date();
-
-    target.setHours(0,0,0,0);
-    today.setHours(0,0,0,0);
-
-    const diff =
-        target - today;
-
-    return Math.ceil(
-        diff / (1000 * 60 * 60 * 24)
-    );
-}
-
+/* ======================
+   INFO
+====================== */
 function buildInfoText(item) {
 
     const tipe =
         String(item.tipe || "")
-            .toLowerCase()
-            .trim();
+            .toLowerCase();
 
     const uraian =
         item.uraian || "";
 
     if (tipe === "hitungan") {
-
-        const days =
-            getCountdownDays(item.tanggal);
-
-        if (days > 0) {
-            return `⏳ ${uraian} ${days} hari lagi`;
-        }
-
-        if (days === 0) {
-            return `⚠️ ${uraian} hari ini`;
-        }
-
-        return `✅ ${uraian} telah berakhir`;
+        return `
+            ⏳ ${uraian}
+            <div
+                class="countdown"
+                data-countdown="${item.tanggal}">
+                ${getCountdown(item.tanggal)}
+            </div>
+        `;
     }
 
     return `📢 ${uraian}`;
 }
 
-function renderInfo(data = []) {
+function renderInfo(data=[]) {
 
-    // RESET
-    if (runningInfo) {
-        runningInfo.style.display = "none";
-    }
+    runningInfo.style.display =
+        "none";
 
-    if (runningTrack) {
-        runningTrack.innerHTML = "";
-    }
+    runningTrack.innerHTML = "";
 
-    if (!data.length) return;
-
-    const activeInfo =
-        data.filter(item => {
-
-            return (
-                String(item.status || "")
-                    .toLowerCase()
-                    .trim() === "tampilkan"
-            );
-        });
-
-    if (!activeInfo.length) return;
+    const active =
+        data.filter(i =>
+            String(i.status)
+            .toLowerCase()
+            .trim() === "tampilkan"
+        );
 
     let popupHTML = "";
 
-    activeInfo.forEach(item => {
+    active.forEach(item => {
 
         const jenis =
-            String(item.jenis || "")
+            String(item.jenis)
                 .toLowerCase()
                 .trim();
 
         const content =
             buildInfoText(item);
 
-        // ======================
-        // RUNNING TEXT
-        // ======================
-
         if (
-            jenis === "runing" ||
-            jenis === "running"
+            jenis === "running" ||
+            jenis === "runing"
         ) {
+            runningInfo.style.display =
+                "flex";
 
-            if (runningInfo) {
-                runningInfo.style.display = "flex";
-            }
-
-            if (runningTrack) {
-
-                runningTrack.innerHTML += `
-                    <span class="running-item">
-                        ${content}
-                    </span>
-                `;
-            }
+            runningTrack.innerHTML += `
+                <span class="running-item">
+                    ${content}
+                </span>
+            `;
         }
 
-        // ======================
-        // POPUP
-        // ======================
-
         if (jenis === "popup") {
-
             popupHTML += `
                 <div class="popup-item">
                     ${content}
@@ -453,16 +390,10 @@ function renderInfo(data = []) {
         }
     });
 
-    
-    // ======================
-    // SHOW POPUP ONCE
-    // ======================
-
     if (
         popupHTML &&
         !popupAlreadyShown
     ) {
-
         popupContent.innerHTML =
             popupHTML;
 
@@ -474,52 +405,83 @@ function renderInfo(data = []) {
     }
 }
 
-// ======================
-// CHARTS
-// ======================
 
-function renderCharts(rekap = [], summary = {}) {
+/* ======================
+   UPDATE COUNTDOWN
+====================== */
+function updateCountdowns() {
+
+    document
+        .querySelectorAll(
+            "[data-countdown]"
+        )
+        .forEach(el => {
+
+            const target =
+                el.dataset.countdown;
+
+            el.innerText =
+                getCountdown(target);
+        });
+}
+
+
+/* ======================
+   CHART
+====================== */
+function initChart(id,type,data){
+
+    const canvas =
+        document.getElementById(id);
+
+    if (!canvas) return;
+
+    if (charts[id])
+        charts[id].destroy();
+
+    charts[id] =
+        new Chart(
+            canvas,
+            {
+                type,
+                data,
+                options:{
+                    responsive:true,
+                    maintainAspectRatio:false,
+                    plugins:{
+                        legend:{
+                            position:"bottom",
+                            labels:{
+                                color:getTextColor()
+                            }
+                        }
+                    }
+                }
+            }
+        );
+}
+
+function renderCharts(rekap=[],summary={}){
 
     const labels =
-        rekap.map(r => r.Jenjang);
-
-    const sudah =
-        rekap.map(r =>
-            Number(r["Sudah BAP"])
-        );
-
-    const belum =
-        rekap.map(r =>
-            Number(r["Belum BAP"])
-        );
-
-    const total =
-        rekap.map(r =>
-            Number(r["Total"])
-        );
+        rekap.map(x=>x.Jenjang);
 
     initChart(
         "barChart",
         "bar",
         {
             labels,
-
-            datasets: [
-
+            datasets:[
                 {
-                    label: "Sudah BAP",
-                    data: sudah,
-                    backgroundColor: "#22c55e",
-                    borderRadius: 10
+                    label:"Sudah BAP",
+                    data:rekap.map(x=>x["Sudah BAP"]),
+                    backgroundColor:"#22c55e"
                 },
-
                 {
-                    label: "Belum BAP",
-                    data: belum,
-                    backgroundColor: "#ef4444",
-                    borderRadius: 10
+                    label:"Belum BAP",
+                    data:rekap.map(x=>x["Belum BAP"]),
+                    backgroundColor:"#ef4444"
                 }
-
             ]
         }
     );
@@ -528,397 +490,90 @@ function renderCharts(rekap = [], summary = {}) {
         "pieChart",
         "pie",
         {
-            labels: [
-                "Sudah BAP",
-                "Belum BAP"
-            ],
-
-            datasets: [
-
-                {
-                    data: [
-                        summary.sudah_bap || 0,
-                        summary.belum_bap || 0
-                    ],
-
-                    backgroundColor: [
-                        "#22c55e",
-                        "#ef4444"
-                    ]
-                }
-
-            ]
-        }
-    );
-
-    initChart(
-        "donutChart",
-        "doughnut",
-        {
-            labels,
-
-            datasets: [
-
-                {
-                    data: total,
-
-                    backgroundColor: [
-                        "#3b82f6",
-                        "#8b5cf6",
-                        "#f59e0b",
-                        "#ec4899"
-                    ],
-
-                    borderWidth: 0
-                }
-
-            ]
+            labels:["Sudah","Belum"],
+            datasets:[{
+                data:[
+                    summary.sudah_bap || 0,
+                    summary.belum_bap || 0
+                ],
+                backgroundColor:[
+                    "#22c55e",
+                    "#ef4444"
+                ]
+            }]
         }
     );
 }
 
-// ======================
-// INIT CHART
-// ======================
 
-function initChart(id, type, data) {
-
-    const canvas =
-        document.getElementById(id);
-
-    if (!canvas) return;
-
-    if (charts[id]) {
-        charts[id].destroy();
-    }
-
-    charts[id] =
-        new Chart(
-            canvas.getContext("2d"),
-            {
-
-                type,
-
-                data,
-
-                options: {
-
-                    responsive: true,
-
-                    maintainAspectRatio: false,
-
-                    plugins: {
-
-                        legend: {
-
-                            position: "bottom",
-
-                            labels: {
-                                color:
-                                    getTextColor()
-                            }
-                        }
-                    },
-
-                    scales:
-                        type === "bar"
-                        ? {
-
-                            x: {
-
-                                ticks: {
-                                    color:
-                                        getTextColor()
-                                },
-
-                                grid: {
-                                    color:
-                                    "rgba(255,255,255,0.05)"
-                                }
-                            },
-
-                            y: {
-
-                                beginAtZero: true,
-
-                                ticks: {
-                                    color:
-                                        getTextColor()
-                                },
-
-                                grid: {
-                                    color:
-                                    "rgba(255,255,255,0.05)"
-                                }
-                            }
-
-                        }
-                        : {}
-                }
-            }
-        );
-}
-
-// ======================
-// PROGRESS
-// ======================
-
-function renderProgress(rekap = []) {
+/* ======================
+   PROGRESS
+====================== */
+function renderProgress(rekap=[]){
 
     progressContainer.innerHTML =
-        rekap.map(item => {
-
-            const total =
-                Number(item["Total"]);
-
-            const sudah =
-                Number(item["Sudah BAP"]);
+        rekap.map(item=>{
 
             const persen =
-                total > 0
-                ? Math.round(
-                    (sudah / total) * 100
-                )
-                : 0;
+                Math.round(
+                    item["Sudah BAP"] /
+                    item["Total"] * 100
+                );
 
             return `
                 <div class="progress-item">
-
                     <div class="progress-title">
-
-                        <span>
-                            ${item.Jenjang}
-                        </span>
-
-                        <span>
-                            ${persen}%
-                        </span>
-
+                        <span>${item.Jenjang}</span>
+                        <span>${persen}%</span>
                     </div>
-
                     <div class="progress-track">
-
                         <div
                             class="progress-bar"
-                            style="width:${persen}%"
-                        ></div>
-
+                            style="width:${persen}%">
+                        </div>
                     </div>
-
                 </div>
             `;
         }).join("");
 }
 
-// ======================
-// RANKING
-// ======================
 
-function renderRanking(rekap = []) {
+/* ======================
+   RANKING
+====================== */
+function renderRanking(rekap=[]){
 
     const sorted =
-        [...rekap].sort((a, b) => {
-
-            const persenA =
-                a["Total"] > 0
-                ? a["Sudah BAP"] / a["Total"]
-                : 0;
-
-            const persenB =
-                b["Total"] > 0
-                ? b["Sudah BAP"] / b["Total"]
-                : 0;
-
-            return persenB - persenA;
-        });
+        [...rekap].sort(
+            (a,b)=>
+            b["Sudah BAP"]/b["Total"]
+            -
+            a["Sudah BAP"]/a["Total"]
+        );
 
     rankingContainer.innerHTML =
-        sorted.map((item, index) => {
-
-            const persen =
-                item["Total"] > 0
-                ? Math.round(
-                    (item["Sudah BAP"] /
-                    item["Total"]) * 100
-                )
-                : 0;
-
-            return `
-                <div class="rank-item">
-
-                    <div class="rank-left">
-
-                        <div class="rank-number">
-                            ${index + 1}
-                        </div>
-
-                        <span>
-                            ${item.Jenjang}
-                        </span>
-
+        sorted.map((x,i)=>`
+            <div class="rank-item">
+                <div class="rank-left">
+                    <div class="rank-number">
+                        ${i+1}
                     </div>
-
-                    <div class="rank-percent">
-                        ${persen}%
-                    </div>
-
+                    <span>${x.Jenjang}</span>
                 </div>
-            `;
-        }).join("");
+                <div class="rank-percent">
+                    ${Math.round(
+                        x["Sudah BAP"] /
+                        x["Total"] * 100
+                    )}%
+                </div>
+            </div>
+        `).join("");
 }
 
-// ======================
-// THEME
-// ======================
 
-btnTheme.addEventListener(
-    "click",
-    () => {
-
-        const html =
-            document.documentElement;
-
-        const current =
-            html.getAttribute(
-                "data-theme"
-            );
-
-        const next =
-            current === "dark"
-            ? "light"
-            : "dark";
-
-        html.setAttribute(
-            "data-theme",
-            next
-        );
-
-        btnTheme.innerText =
-            next === "dark"
-            ? "🌙 Dark Mode"
-            : "☀️ Light Mode";
-
-        renderCharts(
-            lastRekap,
-            lastSummary
-        );
-    }
-);
-
-// ======================
-// POPUP CLOSE
-// ======================
-
-if (popupClose) {
-
-    popupClose.addEventListener(
-        "click",
-        () => {
-
-            popupOverlay.classList.remove(
-                "active"
-            );
-        }
-    );
-}
-
-// ======================
-// EXPORT PDF
-// ======================
-
-btnExport.addEventListener(
-    "click",
-    async () => {
-
-        const element =
-            document.getElementById(
-                ".container"
-            );
-
-        const { jsPDF } =
-            window.jspdf;
-
-        const canvas =
-            await html2canvas(
-                element,
-                { scale: 2 }
-            );
-
-        const imgData =
-            canvas.toDataURL(
-                "image/png"
-            );
-
-        const pdf =
-            new jsPDF(
-                "p",
-                "mm",
-                "a4"
-            );
-
-        const width =
-            pdf.internal.pageSize.getWidth();
-
-        const height =
-            (
-                canvas.height *
-                width
-            ) / canvas.width;
-
-        pdf.addImage(
-            imgData,
-            "PNG",
-            0,
-            0,
-            width,
-            height
-        );
-
-        pdf.save(
-            "Dashboard-BAP-EMIS.pdf"
-        );
-    }
-);
-
-// ======================
-// TIMER
-// ======================
-
-setInterval(async () => {
-
-    countdown--;
-
-    timerEl.innerText =
-        countdown;
-
-    if (countdown <= 0) {
-
-        countdown = 30;
-
-        await loadData();
-    }
-
-}, 1000);
-
-// ======================
-// COLOR
-// ======================
-
-function getTextColor() {
-
-    return document
-        .documentElement
-        .getAttribute("data-theme")
-        === "dark"
-
-        ? "#94a3b8"
-        : "#475569";
-}
-
-// ======================
-// EVENTS
-// ======================
-
+/* ======================
+   EVENTS
+====================== */
 searchInput.addEventListener(
     "input",
     filterData
@@ -934,55 +589,144 @@ filterStatusBap.addEventListener(
     filterData
 );
 
-// ======================
-// INITIAL LOAD
-// ======================
+btnTheme.addEventListener(
+    "click",
+    ()=>{
 
+        const html =
+            document.documentElement;
+
+        const next =
+            html.getAttribute(
+                "data-theme"
+            ) === "dark"
+            ? "light"
+            : "dark";
+
+        html.setAttribute(
+            "data-theme",
+            next
+        );
+
+        btnTheme.innerText =
+            next==="dark"
+            ? "🌙 Dark Mode"
+            : "☀️ Light Mode";
+
+        renderCharts(
+            lastRekap,
+            lastSummary
+        );
+    }
+);
+
+btnExport.addEventListener(
+    "click",
+    async ()=>{
+
+        const element =
+            document.querySelector(
+                ".container"
+            );
+
+        const { jsPDF } =
+            window.jspdf;
+
+        const canvas =
+            await html2canvas(
+                element,
+                { scale:2 }
+            );
+
+        const img =
+            canvas.toDataURL(
+                "image/png"
+            );
+
+        const pdf =
+            new jsPDF(
+                "p","mm","a4"
+            );
+
+        const width =
+            pdf.internal
+            .pageSize
+            .getWidth();
+
+        const height =
+            canvas.height *
+            width /
+            canvas.width;
+
+        pdf.addImage(
+            img,
+            "PNG",
+            0,
+            0,
+            width,
+            height
+        );
+
+        pdf.save(
+            "Dashboard-BAP-EMIS.pdf"
+        );
+    }
+);
+
+popupClose.addEventListener(
+    "click",
+    ()=>popupOverlay
+        .classList
+        .remove("active")
+);
+
+popupOverlay.addEventListener(
+    "click",
+    e=>{
+        if (
+            e.target === popupOverlay
+        ) {
+            popupOverlay
+                .classList
+                .remove("active");
+        }
+    }
+);
+
+document.addEventListener(
+    "keydown",
+    e=>{
+        if (e.key==="Escape")
+            popupOverlay
+                .classList
+                .remove("active");
+    }
+);
+
+
+/* ======================
+   AUTO REFRESH
+====================== */
+setInterval(async ()=>{
+
+    countdownRefresh--;
+
+    timerEl.innerText =
+        countdownRefresh;
+
+    updateCountdowns();
+
+    if (
+        countdownRefresh <= 0
+    ) {
+        countdownRefresh = 30;
+        await loadData();
+    }
+
+},1000);
+
+
+/* ======================
+   INIT
+====================== */
 loadData();
-
-document.addEventListener('DOMContentLoaded', () => {
-    
-    const popupClose = document.getElementById('popupClose');
-    const popupContent = document.getElementById('popupContent');
-
-    // 1. Fungsi Menutup Popup
-    const closePopup = () => {
-        popupOverlay.classList.remove('active');
-    };
-
-    // 2. Fungsi Membuka Popup dengan Konten Custom
-    const showPopup = (message) => {
-        popupContent.innerHTML = message;
-        popupOverlay.classList.add('active');
-    };
-
-    // 3. Trigger: Munculkan saat halaman baru dibuka (Contoh)
-   // setTimeout(() => {
-   //     showPopup(`
-    //        <p>Selamat datang di <strong>Dashboard BAP EMIS 2026</strong>.</p>
-   //         <br>
-            // <ul>
-            //    <li>Data diupdate setiap 30 detik secara otomatis.</li>
-            //    <li>Gunakan fitur Export PDF untuk laporan mingguan.</li>
-            //    <li>Pastikan koneksi internet stabil saat sinkronisasi data.</li>
-            // </ul>
-   //     `);
-  //  }, 1000); // Muncul setelah 1 detik
-
-    // 4. Event Listener untuk tombol tutup
-    popupClose.addEventListener('click', closePopup);
-
-    // 5. Klik di luar kotak (overlay) juga menutup popup
-    popupOverlay.addEventListener('click', (e) => {
-        if (e.target === popupOverlay) {
-            closePopup();
-        }
-    });
-
-    // 6. Tekan tombol 'Escape' untuk menutup
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            closePopup();
-        }
-    });
-});
