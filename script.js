@@ -131,12 +131,7 @@ function getCountdown(dateString) {
             (diff % 60000) / 1000
         );
 
-    return `
-        ${hari} Hari
-        ${jam} Jam
-        ${menit} Menit
-        ${detik} Detik
-    `;
+    return `${hari} Hari ${jam} Jam ${menit} Menit ${detik} Detik`;
 }
 
 
