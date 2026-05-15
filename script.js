@@ -89,15 +89,16 @@ function getTextColor() {
 /* ======================
    COUNTDOWN
 ====================== */
+/* ======================
+   COUNTDOWN
+====================== */
 function getCountdown(dateString) {
 
-    if (!dateString)
-        return `
-    ${hari} Hari
-    ${jam} Jam
-    ${menit} Menit
-    ${detik} Detik
-`;
+    // Jika tanggal kosong
+    if (!dateString) {
+        return "0 Hari 0 Jam 0 Menit 0 Detik";
+    }
+
     const target =
         new Date(dateString).getTime();
 
@@ -107,8 +108,10 @@ function getCountdown(dateString) {
     const diff =
         target - now;
 
-    if (diff <= 0)
+    // Jika waktu habis
+    if (diff <= 0) {
         return "Selesai";
+    }
 
     const hari =
         Math.floor(diff / 86400000);
@@ -128,7 +131,12 @@ function getCountdown(dateString) {
             (diff % 60000) / 1000
         );
 
-    return `${hari}h ${jam}j ${menit}m ${detik}d`;
+    return `
+        ${hari} Hari
+        ${jam} Jam
+        ${menit} Menit
+        ${detik} Detik
+    `;
 }
 
 
@@ -370,18 +378,22 @@ function buildInfoText(item) {
     `;
 }
 
-function renderInfo(data=[]) {
+/* ======================
+   INFO
+====================== */
+function renderInfo(data = []) {
 
-    runningInfo.style.display =
-        "none";
+    if (!runningInfo || !runningTrack)
+        return;
 
+    runningInfo.style.display = "none";
     runningTrack.innerHTML = "";
 
     const active =
-        data.filter(i =>
-            String(i.status)
-            .toLowerCase()
-            .trim() === "tampilkan"
+        data.filter(item =>
+            String(item.status || "")
+                .toLowerCase()
+                .trim() === "tampilkan"
         );
 
     let popupHTML = "";
@@ -389,17 +401,19 @@ function renderInfo(data=[]) {
     active.forEach(item => {
 
         const jenis =
-            String(item.jenis)
+            String(item.jenis || "")
                 .toLowerCase()
                 .trim();
 
         const content =
             buildInfoText(item);
 
+        // RUNNING TEXT
         if (
             jenis === "running" ||
             jenis === "runing"
         ) {
+
             runningInfo.style.display =
                 "flex";
 
@@ -410,7 +424,9 @@ function renderInfo(data=[]) {
             `;
         }
 
+        // POPUP
         if (jenis === "popup") {
+
             popupHTML += `
                 <div class="popup-item">
                     ${content}
@@ -419,10 +435,12 @@ function renderInfo(data=[]) {
         }
     });
 
+    // SHOW POPUP
     if (
         popupHTML &&
         !popupAlreadyShown
     ) {
+
         popupContent.innerHTML =
             popupHTML;
 
@@ -538,67 +556,108 @@ function renderCharts(rekap=[],summary={}){
 /* ======================
    PROGRESS
 ====================== */
-function renderProgress(rekap=[]){
+function renderProgress(rekap = []) {
 
     progressContainer.innerHTML =
-        rekap.map(item=>{
+        rekap.map(item => {
+
+            const total =
+                Number(item["Total"]) || 0;
+
+            const sudah =
+                Number(item["Sudah BAP"]) || 0;
 
             const persen =
-                Math.round(
-                    item["Sudah BAP"] /
-                    item["Total"] * 100
-                );
+                total > 0
+                ? Math.round(
+                    (sudah / total) * 100
+                )
+                : 0;
 
             return `
                 <div class="progress-item">
+
                     <div class="progress-title">
                         <span>${item.Jenjang}</span>
                         <span>${persen}%</span>
                     </div>
+
                     <div class="progress-track">
                         <div
                             class="progress-bar"
                             style="width:${persen}%">
                         </div>
                     </div>
+
                 </div>
             `;
         }).join("");
 }
 
-
 /* ======================
    RANKING
 ====================== */
-function renderRanking(rekap=[]){
+function renderRanking(rekap = []) {
 
     const sorted =
-        [...rekap].sort(
-            (a,b)=>
-            b["Sudah BAP"]/b["Total"]
-            -
-            a["Sudah BAP"]/a["Total"]
-        );
+        [...rekap].sort((a, b) => {
+
+            const totalA =
+                Number(a["Total"]) || 0;
+
+            const totalB =
+                Number(b["Total"]) || 0;
+
+            const persenA =
+                totalA > 0
+                ? a["Sudah BAP"] / totalA
+                : 0;
+
+            const persenB =
+                totalB > 0
+                ? b["Sudah BAP"] / totalB
+                : 0;
+
+            return persenB - persenA;
+        });
 
     rankingContainer.innerHTML =
-        sorted.map((x,i)=>`
-            <div class="rank-item">
-                <div class="rank-left">
-                    <div class="rank-number">
-                        ${i+1}
-                    </div>
-                    <span>${x.Jenjang}</span>
-                </div>
-                <div class="rank-percent">
-                    ${Math.round(
-                        x["Sudah BAP"] /
-                        x["Total"] * 100
-                    )}%
-                </div>
-            </div>
-        `).join("");
-}
+        sorted.map((x, i) => {
 
+            const total =
+                Number(x["Total"]) || 0;
+
+            const sudah =
+                Number(x["Sudah BAP"]) || 0;
+
+            const persen =
+                total > 0
+                ? Math.round(
+                    (sudah / total) * 100
+                )
+                : 0;
+
+            return `
+                <div class="rank-item">
+
+                    <div class="rank-left">
+
+                        <div class="rank-number">
+                            ${i + 1}
+                        </div>
+
+                        <span>${x.Jenjang}</span>
+
+                    </div>
+
+                    <div class="rank-percent">
+                        ${persen}%
+                    </div>
+
+                </div>
+            `;
+        }).join("");
+}
 
 /* ======================
    EVENTS
