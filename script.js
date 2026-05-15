@@ -92,8 +92,12 @@ function getTextColor() {
 function getCountdown(dateString) {
 
     if (!dateString)
-        return "0h 0j 0m 0d";
-
+        return `
+    ${hari} Hari
+    ${jam} Jam
+    ${menit} Menit
+    ${detik} Detik
+`;
     const target =
         new Date(dateString).getTime();
 
