@@ -812,6 +812,20 @@ COUNTDOWN
 
 .popup-item .countdown{
     margin-top:10px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    gap:6px;
+
+    flex-wrap:nowrap;
+    white-space:nowrap;
+}
+
+.popup-item .countdown span{
+    display:inline;
+    white-space:nowrap;
 }
 
 /* RUNNING TEXT */
