@@ -94,10 +94,8 @@ function getTextColor() {
 ====================== */
 function getCountdown(dateString) {
 
-    // Jika tanggal kosong
-    if (!dateString) {
-        return "0 Hari 0 Jam 0 Menit 0 Detik";
-    }
+    if (!dateString)
+        return "Tidak ada tanggal";
 
     const target =
         new Date(dateString).getTime();
@@ -108,10 +106,12 @@ function getCountdown(dateString) {
     const diff =
         target - now;
 
-    // Jika waktu habis
-    if (diff <= 0) {
-        return "Selesai";
-    }
+    if (diff <= 0)
+        return `
+            <span class="cd-selesai">
+                Selesai
+            </span>
+        `;
 
     const hari =
         Math.floor(diff / 86400000);
@@ -131,7 +131,23 @@ function getCountdown(dateString) {
             (diff % 60000) / 1000
         );
 
-    return `${hari} Hari ${jam} Jam ${menit} Menit ${detik} Detik`;
+    return `
+        <span class="cd-hari">
+            ${hari} Hari
+        </span>
+
+        <span class="cd-jam">
+            ${jam} Jam
+        </span>
+
+        <span class="cd-menit">
+            ${menit} Menit
+        </span>
+
+        <span class="cd-detik">
+            ${detik} Detik
+        </span>
+    `;
 }
 
 
@@ -462,7 +478,7 @@ function updateCountdowns() {
             const target =
                 el.dataset.countdown;
 
-            el.innerText =
+            el.innerHTML =
                 getCountdown(target);
         });
 }
