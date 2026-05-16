@@ -792,6 +792,8 @@ COUNTDOWN
     justify-content:center;
     align-items:center;
 
+    gap:10px;
+
     width:100%;
 
     margin-top:10px;
@@ -802,15 +804,56 @@ COUNTDOWN
     font-weight:700;
 
     line-height:1.6;
+
+    flex-wrap:wrap;
 }
+
+/* POPUP */
 
 .popup-item .countdown{
     margin-top:10px;
 }
 
+/* RUNNING TEXT */
+
 .running-item .countdown{
     display:inline-flex;
+
+    justify-content:center;
+    align-items:center;
+
+    gap:10px;
+
     margin-left:10px;
+
+    width:auto;
+
+    vertical-align:middle;
+}
+
+/* WARNA TIAP SATUAN */
+
+.cd-hari{
+    color:#22c55e;
+}
+
+.cd-jam{
+    color:#3b82f6;
+}
+
+.cd-menit{
+    color:#f59e0b;
+}
+
+.cd-detik{
+    color:#ef4444;
+}
+
+/* STATUS SELESAI */
+
+.cd-selesai{
+    color:#22c55e;
+    font-weight:700;
 }
 
 /* ======================
