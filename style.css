@@ -818,17 +818,23 @@ COUNTDOWN
 
 .running-item .countdown{
     display:inline-flex;
-
-    justify-content:center;
     align-items:center;
 
-    gap:10px;
+    gap:6px;
 
     margin-left:10px;
 
     width:auto;
 
+    white-space:nowrap;
+    flex-wrap:nowrap;
+
     vertical-align:middle;
+}
+
+.running-item .countdown span{
+    display:inline;
+    white-space:nowrap;
 }
 
 /* WARNA TIAP SATUAN */
