@@ -53,6 +53,7 @@ BASE
 
 html {
     width: 100%;
+    overflow-y: scroll;
     overflow-x: hidden;
     scroll-behavior: smooth;
 }
@@ -177,7 +178,6 @@ HEADER
 
     width: 100%;
 
-    margin-bottom: 28px;
 
     padding: 20px;
 
