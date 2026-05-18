@@ -359,20 +359,10 @@ function buildInfoText(item) {
     // COUNTDOWN
     // ======================
 
-    if (
-        tipe === "hitungan" &&
-        tanggal
-    ) {
-
+    if (tipe === "hitungan" && tanggal) {
         return `
-            <div class="info-text">
-                ⏳ ${uraian}
-            </div>
-
-            <div
-                class="countdown"
-                data-countdown="${tanggal}"
-            >
+            <span class="info-text">⏳ ${uraian}</span>
+            <div class="countdown" data-countdown="${tanggal}">
                 ${getCountdown(tanggal)}
             </div>
         `;
