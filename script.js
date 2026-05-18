@@ -477,7 +477,7 @@ function updateCountdowns() {
 /* ======================
    CHART
 ====================== */
-function initChart(id,type,data){
+function initChart(id, type, data) {
 
     const canvas =
         document.getElementById(id);
@@ -488,25 +488,104 @@ function initChart(id,type,data){
         charts[id].destroy();
 
     charts[id] =
-        new Chart(
-            canvas,
-            {
-                type,
-                data,
-                options:{
-                    responsive:true,
-                    maintainAspectRatio:false,
-                    plugins:{
-                        legend:{
-                            position:"bottom",
-                            labels:{
-                                color:getTextColor()
-                            }
+        new Chart(canvas, {
+
+            type,
+
+            data,
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                cutout:
+                    type === "pie"
+                    ? "70%"
+                    : undefined,
+
+                plugins: {
+
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            color: getTextColor()
                         }
+                    },
+
+                    tooltip: {
+                        enabled: true
+                    }
+
+                }
+
+            },
+
+            plugins: [
+
+                {
+                    id: "centerText",
+
+                    afterDraw(chart) {
+
+                        if (type !== "pie")
+                            return;
+
+                        const {
+                            ctx,
+                            chartArea:
+                            {
+                                width,
+                                height
+                            }
+                        } = chart;
+
+                        const total =
+                            data.datasets[0]
+                                .data
+                                .reduce(
+                                    (a,b)=>a+b,
+                                    0
+                                );
+
+                        const sudah =
+                            data.datasets[0]
+                                .data[0] || 0;
+
+                        const persen =
+                            total > 0
+                            ? Math.round(
+                                (sudah / total) * 100
+                            )
+                            : 0;
+
+                        ctx.save();
+
+                        ctx.font =
+                            "bold 32px Poppins";
+
+                        ctx.fillStyle =
+                            getTextColor();
+
+                        ctx.textAlign =
+                            "center";
+
+                        ctx.textBaseline =
+                            "middle";
+
+                        ctx.fillText(
+                            persen + "%",
+                            width / 2,
+                            height / 2
+                        );
+
+                        ctx.restore();
                     }
                 }
-            }
-        );
+
+            ]
+        });
 }
 
 function renderCharts(rekap=[],summary={}){
@@ -536,7 +615,7 @@ function renderCharts(rekap=[],summary={}){
 
     initChart(
         "pieChart",
-        "pie",
+        "doughnut",
         {
             labels:["Sudah","Belum"],
             datasets:[{
