@@ -53,7 +53,7 @@ BASE
 
 html {
     width: 100%;
-    overflow-x: clip;
+    overflow-x: hidden;
     scroll-behavior: smooth;
 }
 
@@ -61,7 +61,7 @@ body {
     width: 100%;
     min-height: 100vh;
 
-    overflow-x: clip;
+    overflow-x: hidden;
 
     background: var(--bg);
     color: var(--text);
@@ -163,8 +163,10 @@ HEADER
 ====================== */
 
 .header {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
 
     z-index: 9999;
 
