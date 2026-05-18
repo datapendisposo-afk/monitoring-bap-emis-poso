@@ -999,6 +999,7 @@ COUNTDOWN
     flex-wrap: nowrap;
 
     white-space: nowrap;
+    margin-top: 0;
 }
 
 .popup-item .countdown span {
