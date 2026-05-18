@@ -477,15 +477,30 @@ function updateCountdowns() {
 /* ======================
    CHART
 ====================== */
-function initChart(id, type, data) {
+
+function destroyChart(id) {
+
+    if (charts[id]) {
+        charts[id].destroy();
+        delete charts[id];
+    }
+}
+
+function initChart(
+    id,
+    type,
+    data,
+    customOptions = {},
+    plugins = []
+) {
 
     const canvas =
         document.getElementById(id);
 
-    if (!canvas) return;
+    if (!canvas)
+        return;
 
-    if (charts[id])
-        charts[id].destroy();
+    destroyChart(id);
 
     charts[id] =
         new Chart(canvas, {
@@ -500,17 +515,22 @@ function initChart(id, type, data) {
 
                 maintainAspectRatio: false,
 
-                cutout:
-                    type === "pie"
-                    ? "70%"
-                    : undefined,
+                animation: {
+                    duration: 800
+                },
 
                 plugins: {
 
                     legend: {
+
                         position: "bottom",
+
                         labels: {
-                            color: getTextColor()
+                            color: getTextColor(),
+                            padding: 18,
+                            font: {
+                                family: "Poppins"
+                            }
                         }
                     },
 
@@ -518,121 +538,303 @@ function initChart(id, type, data) {
                         enabled: true
                     }
 
-                }
+                },
 
+                ...customOptions
             },
 
-            plugins: [
-
-                {
-                    id: "centerText",
-
-                    afterDraw(chart) {
-
-                        if (type !== "pie")
-                            return;
-
-                        const {
-                            ctx,
-                            chartArea:
-                            {
-                                width,
-                                height
-                            }
-                        } = chart;
-
-                        const total =
-                            data.datasets[0]
-                                .data
-                                .reduce(
-                                    (a,b)=>a+b,
-                                    0
-                                );
-
-                        const sudah =
-                            data.datasets[0]
-                                .data[0] || 0;
-
-                        const persen =
-                            total > 0
-                            ? Math.round(
-                                (sudah / total) * 100
-                            )
-                            : 0;
-
-                        ctx.save();
-
-                        ctx.font =
-                            "bold 32px Poppins";
-
-                        ctx.fillStyle =
-                            getTextColor();
-
-                        ctx.textAlign =
-                            "center";
-
-                        ctx.textBaseline =
-                            "middle";
-
-                        ctx.fillText(
-                            persen + "%",
-                            width / 2,
-                            height / 2
-                        );
-
-                        ctx.restore();
-                    }
-                }
-
-            ]
+            plugins
         });
 }
 
-function renderCharts(rekap=[],summary={}){
+
+/* ======================
+   CENTER TEXT PLUGIN
+====================== */
+
+const centerTextPlugin = {
+
+    id: "centerText",
+
+    afterDraw(chart) {
+
+        if (
+            chart.config.type !== "doughnut"
+        ) return;
+
+        const {
+            ctx
+        } = chart;
+
+        const meta =
+            chart.getDatasetMeta(0);
+
+        if (
+            !meta ||
+            !meta.data ||
+            !meta.data.length
+        ) return;
+
+        const x =
+            meta.data[0].x;
+
+        const y =
+            meta.data[0].y;
+
+        const data =
+            chart.data.datasets[0].data;
+
+        const total =
+            data.reduce(
+                (a, b) => a + b,
+                0
+            );
+
+        const sudah =
+            data[0] || 0;
+
+        const persen =
+            total > 0
+            ? Math.round(
+                (sudah / total) * 100
+            )
+            : 0;
+
+        ctx.save();
+
+        ctx.textAlign =
+            "center";
+
+        ctx.textBaseline =
+            "middle";
+
+        ctx.fillStyle =
+            getTextColor();
+
+        ctx.font =
+            "700 30px Poppins";
+
+        ctx.fillText(
+            persen + "%",
+            x,
+            y - 8
+        );
+
+        ctx.font =
+            "500 13px Poppins";
+
+        ctx.fillStyle =
+            "#94a3b8";
+
+        ctx.fillText(
+            "Sudah BAP",
+            x,
+            y + 18
+        );
+
+        ctx.restore();
+    }
+};
+
+
+/* ======================
+   RENDER CHARTS
+====================== */
+
+function renderCharts(
+    rekap = [],
+    summary = {}
+) {
 
     const labels =
-        rekap.map(x=>x.Jenjang);
+        rekap.map(
+            x => x.Jenjang
+        );
+
+    /* ======================
+       BAR CHART
+    ====================== */
 
     initChart(
         "barChart",
         "bar",
         {
+
             labels,
-            datasets:[
+
+            datasets: [
+
                 {
-                    label:"Sudah BAP",
-                    data:rekap.map(x=>x["Sudah BAP"]),
-                    backgroundColor:"#22c55e"
+                    label: "Sudah BAP",
+
+                    data:
+                        rekap.map(
+                            x => Number(
+                                x["Sudah BAP"]
+                            ) || 0
+                        ),
+
+                    backgroundColor:
+                        "#22c55e",
+
+                    borderRadius: 10
                 },
+
                 {
-                    label:"Belum BAP",
-                    data:rekap.map(x=>x["Belum BAP"]),
-                    backgroundColor:"#ef4444"
+                    label: "Belum BAP",
+
+                    data:
+                        rekap.map(
+                            x => Number(
+                                x["Belum BAP"]
+                            ) || 0
+                        ),
+
+                    backgroundColor:
+                        "#ef4444",
+
+                    borderRadius: 10
                 }
+
+            ]
+        },
+
+        {
+
+            scales: {
+
+                x: {
+
+                    ticks: {
+                        color:
+                            getTextColor()
+                    },
+
+                    grid: {
+                        display: false
+                    }
+                },
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+                        color:
+                            getTextColor()
+                    },
+
+                    grid: {
+                        color:
+                            "rgba(255,255,255,0.06)"
+                    }
+                }
+            }
+        }
+    );
+
+
+    /* ======================
+       PIE CHART
+    ====================== */
+
+    initChart(
+        "pieChart",
+        "pie",
+        {
+
+            labels: [
+                "Sudah",
+                "Belum"
+            ],
+
+            datasets: [
+
+                {
+
+                    data: [
+
+                        Number(
+                            summary.sudah_bap
+                        ) || 0,
+
+                        Number(
+                            summary.belum_bap
+                        ) || 0
+                    ],
+
+                    backgroundColor: [
+                        "#22c55e",
+                        "#ef4444"
+                    ],
+
+                    borderWidth: 0
+                }
+
             ]
         }
     );
 
+
+    /* ======================
+       DONUT CHART
+    ====================== */
+
     initChart(
-        "pieChart",
+        "donutChart",
         "doughnut",
         {
-            labels:["Sudah","Belum"],
-            datasets:[{
-                data:[
-                    summary.sudah_bap || 0,
-                    summary.belum_bap || 0
-                ],
-                backgroundColor:[
-                    "#22c55e",
-                    "#ef4444"
-                ]
-            }]
-        }
+
+            labels: [
+                "Sudah",
+                "Belum"
+            ],
+
+            datasets: [
+
+                {
+
+                    data: [
+
+                        Number(
+                            summary.sudah_bap
+                        ) || 0,
+
+                        Number(
+                            summary.belum_bap
+                        ) || 0
+                    ],
+
+                    backgroundColor: [
+                        "#3b82f6",
+                        "#1e293b"
+                    ],
+
+                    borderWidth: 0,
+
+                    hoverOffset: 6
+                }
+
+            ]
+        },
+
+        {
+
+            cutout: "72%",
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+            }
+        },
+
+        [
+            centerTextPlugin
+        ]
     );
 }
-
-
 /* ======================
    PROGRESS
 ====================== */
