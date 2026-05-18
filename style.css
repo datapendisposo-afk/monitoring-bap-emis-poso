@@ -153,6 +153,7 @@ CONTAINER
 .container {
     width: 100%;
     max-width: 1400px;
+    padding-top: 120px;
 
     margin: 0 auto;
 
