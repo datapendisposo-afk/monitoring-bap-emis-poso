@@ -1095,12 +1095,20 @@ setInterval(async ()=>{
 
 },1000);
 function adjustContainerPadding() {
-    const header = document.querySelector('.header');
-    const container = document.querySelector('.container');
-    
+
+    const header =
+        document.querySelector('.header');
+
+    const container =
+        document.querySelector('.container');
+
     if (header && container) {
-        const headerHeight = header.offsetHeight;
-        container.style.paddingTop = headerHeight + 'px';
+
+        const headerHeight =
+            header.offsetHeight;
+
+        container.style.paddingTop =
+            (headerHeight + 30) + 'px';
     }
 }
 
