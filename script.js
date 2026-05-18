@@ -1108,7 +1108,7 @@ function adjustContainerPadding() {
             header.offsetHeight;
 
         container.style.paddingTop =
-            (headerHeight + 30) + 'px';
+            (headerHeight + 20) + 'px';
     }
 }
 
