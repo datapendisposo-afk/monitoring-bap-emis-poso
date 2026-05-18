@@ -823,6 +823,22 @@ setInterval(async ()=>{
     }
 
 },1000);
+function adjustContainerPadding() {
+    const header = document.querySelector('.header');
+    const container = document.querySelector('.container');
+    
+    if (header && container) {
+        const headerHeight = header.offsetHeight;
+        container.style.paddingTop = headerHeight + 'px';
+    }
+}
+
+// Panggil saat halaman dimuat
+window.addEventListener('load', adjustContainerPadding);
+// Panggil ulang saat ukuran jendela berubah
+window.addEventListener('resize', adjustContainerPadding);
+// Optional: jika ada konten dinamis yang mengubah tinggi header (misal running text)
+// Anda bisa memanggil adjustContainerPadding() setelah konten berubah.
 
 
 /* ======================
