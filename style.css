@@ -1154,9 +1154,10 @@ FOOTER BADGE
 }
 
 /* ======================
-RESPONSIVE
+RESPONSIVE FIX
 ====================== */
 
+/* TABLET */
 @media (max-width: 992px) {
 
     .charts-grid,
@@ -1165,74 +1166,59 @@ RESPONSIVE
     }
 
     .summary-grid {
-        grid-template-columns:
-            repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .header-top {
         flex-direction: column;
         align-items: flex-start;
     }
-}
-
-@media (max-width: 768px) {
-
-    .container {
-        padding: 16px;
-    }
 
     .header {
-        padding: 18px;
-    }
-
-    .header-left h1 {
-        font-size: 26px;
-    }
-
-    .toolbar-left {
-        width: 100%;
-
-        flex-direction: column;
-    }
-
-    input,
-    select {
-        width: 100%;
-        min-width: 100%;
-    }
-
-    .header-actions {
-        width: 100%;
-    }
-
-    .header-actions .btn {
-        flex: 1;
-    }
-
-    .summary-card h2 {
-        font-size: 26px;
-    }
-
-    .footer-content {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-}
-
-@media (max-width: 576px) {
-
-    .container {
-        padding: 12px;
-    }
-
-    .header {
-        padding: 16px;
-
-        border-radius: 0 0 20px 20px;
+        padding: 12px 14px;
+        gap: 12px;
     }
 
     .header-left h1 {
         font-size: 20px;
+    }
+
+    .header-left p {
+        font-size: 13px;
+    }
+
+    .running-info {
+        min-height: 30px;
+        padding: 4px 12px;
+        font-size: 13px;
+    }
+
+    .container {
+        padding-top: 220px;
+    }
+}
+
+
+/* MOBILE */
+@media (max-width: 576px) {
+
+    .container {
+        padding: 12px;
+        padding-top: 200px;
+    }
+
+    .header {
+        padding: 10px 12px;
+        gap: 10px;
+        border-radius: 0 0 20px 20px;
+    }
+
+    .header-left h1 {
+        font-size: 17px;
+    }
+
+    .header-left p {
+        font-size: 12px;
     }
 
     .summary-grid {
@@ -1245,12 +1231,13 @@ RESPONSIVE
 
     .header-actions {
         width: 100%;
-
         flex-direction: column;
     }
 
     .btn {
         width: 100%;
+        padding: 8px 12px;
+        font-size: 12px;
     }
 
     .popup-box {
@@ -1261,111 +1248,10 @@ RESPONSIVE
         font-size: 14px;
     }
 
-    /* ======================
-    SMOOTH TRANSITION
-    ====================== */
-    .header,
-    .header * {
-        transition: all 0.25s ease;
-    }
-    
-    
-    /* ======================
-    HEADER SHRINK (GLOBAL)
-    ====================== */
-    .header.shrink {
-        padding: 6px 10px;
-        gap: 8px;
-        border-radius: 0 0 18px 18px;
-        backdrop-filter: blur(18px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    }
-    
-    /* teks */
-    .header.shrink .header-left h1 {
-        font-size: 18px;
-    }
-    
-    .header.shrink .header-left p {
-        font-size: 12px;
-        margin-top: 2px;
-    }
-    
-    /* running text */
-    .header.shrink .running-info {
+    .running-info {
         min-height: 26px;
-        padding: 3px 12px;
+        padding: 3px 10px;
         font-size: 12px;
     }
-    
-    /* tombol */
-    .header.shrink .btn {
-        padding: 8px 12px;
-        font-size: 12px;
-    }
-    
-    
-    /* ======================
-    TABLET ADJUSTMENT
-    ====================== */
-    @media (max-width: 992px) {
-    
-        .header {
-            padding: 12px 14px;
-            gap: 12px;
-        }
-    
-        .header-left h1 {
-            font-size: 20px;
-        }
-    
-        .header-left p {
-            font-size: 13px;
-        }
-    
-        .running-info {
-            min-height: 30px;
-            padding: 4px 12px;
-            font-size: 13px;
-        }
-    
-        .container {
-            padding-top: 220px;
-        }
-    }
-    
-    
-    /* ======================
-    MOBILE ADJUSTMENT
-    ====================== */
-    @media (max-width: 576px) {
-    
-        .header {
-            padding: 10px 12px;
-            gap: 10px;
-        }
-    
-        .header-left h1 {
-            font-size: 17px;
-        }
-    
-        .header-left p {
-            font-size: 12px;
-        }
-    
-        .running-info {
-            min-height: 26px;
-            padding: 3px 10px;
-            font-size: 12px;
-        }
-    
-        .btn {
-            padding: 8px 12px;
-            font-size: 12px;
-        }
-    
-        .container {
-            padding-top: 200px;
-        }
-    }
+}
 }
